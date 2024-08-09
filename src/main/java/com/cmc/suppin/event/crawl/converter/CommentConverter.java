@@ -1,5 +1,6 @@
 package com.cmc.suppin.event.crawl.converter;
 
+import com.cmc.suppin.event.crawl.controller.dto.CommentRequestDTO;
 import com.cmc.suppin.event.crawl.controller.dto.CommentResponseDTO;
 import com.cmc.suppin.event.crawl.domain.Comment;
 import com.cmc.suppin.event.events.domain.Event;
@@ -42,15 +43,16 @@ public class CommentConverter {
                 .build();
     }
 
-    public static CommentResponseDTO.WinnerResponseDTO toWinnerResponseDTO(List<Comment> winners, int winnerCount, String startDate, String endDate) {
+    public static CommentResponseDTO.WinnerResponseDTO toWinnerResponseDTO(List<Comment> winners, CommentRequestDTO.WinnerRequestDTO request) {
         List<CommentResponseDTO.CommentDetailDTO> winnerDetails = winners.stream()
                 .map(CommentConverter::toCommentDetailDTO)
                 .collect(Collectors.toList());
 
         return CommentResponseDTO.WinnerResponseDTO.builder()
-                .winnerCount(winnerCount)
-                .startDate(startDate)
-                .endDate(endDate)
+                .winnerCount(request.getWinnerCount())
+                .minLength(request.getMinLength())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
                 .winners(winnerDetails)
                 .build();
     }
