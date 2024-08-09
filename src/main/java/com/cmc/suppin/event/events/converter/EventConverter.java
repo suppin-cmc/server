@@ -59,6 +59,11 @@ public class EventConverter {
             url = Optional.ofNullable(event.getUrl());
         }
 
+        // 설문 응답 수 합산
+        int surveyAnswerCount = event.getSurveyList().stream()
+                .mapToInt(survey -> survey.getAnonymousParticipantList().size())
+                .sum();
+
         return EventResponseDTO.EventInfoDTO.builder()
                 .eventId(event.getId())
                 .type(event.getType())
@@ -67,7 +72,7 @@ public class EventConverter {
                 .startDate(event.getStartDate().format(formatter))
                 .endDate(event.getEndDate().format(formatter))
                 .announcementDate(event.getAnnouncementDate().format(formatter))
-                .surveyCount(event.getSurveyList().size())
+                .surveyCount(surveyAnswerCount)
                 .commentCount(event.getCommentList().size())
                 .status(event.getStatus())
                 .build();
