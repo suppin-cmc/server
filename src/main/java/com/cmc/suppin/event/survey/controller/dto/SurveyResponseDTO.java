@@ -60,9 +60,9 @@ public class SurveyResponseDTO {
     public static class SurveyAnswerResultDTO {
         private Long questionId;
         private String questionText;
-        private List<AnswerDTO> answers;
         private int totalPages;
         private long totalElements;
+        private List<AnswerDTO> answers;
 
         @Getter
         @NoArgsConstructor
