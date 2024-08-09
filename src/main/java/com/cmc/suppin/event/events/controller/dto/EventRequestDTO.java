@@ -19,7 +19,6 @@ public class EventRequestDTO {
         private EventType type;
         @NotEmpty
         private String title;
-        @NotEmpty
         private String description;
         @NotEmpty
         private String url;
