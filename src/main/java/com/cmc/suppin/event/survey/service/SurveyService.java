@@ -143,6 +143,7 @@ public class SurveyService {
         return SurveyConverter.toSurveyAnswerResultDTO(question, answersPage);
     }
 
+    // 랜덤 추첨 당첨자 선정
     @Transactional
     public SurveyResponseDTO.RandomSelectionResponseDTO selectRandomWinners(SurveyRequestDTO.RandomSelectionRequestDTO request, String userId) {
         // 사용자 식별
@@ -172,7 +173,7 @@ public class SurveyService {
                 .limit(request.getWinnerCount())
                 .collect(Collectors.toList());
 
-        // 당첨자 업데이트 및 WinnerDTO 생성
+        // 당첨자 업데이트(isWinner -> True 설정) 및 WinnerDTO 생성
         List<SurveyResponseDTO.RandomSelectionResponseDTO.WinnerDTO> winners = selectedWinners.stream()
                 .map(answer -> {
                     AnonymousParticipant participant = answer.getAnonymousParticipant();

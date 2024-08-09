@@ -1,5 +1,6 @@
 package com.cmc.suppin.event.crawl.service;
 
+import com.cmc.suppin.event.crawl.controller.dto.CommentRequestDTO;
 import com.cmc.suppin.event.crawl.controller.dto.CommentResponseDTO;
 import com.cmc.suppin.event.crawl.converter.CommentConverter;
 import com.cmc.suppin.event.crawl.domain.Comment;
@@ -18,9 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
@@ -49,41 +48,36 @@ public class CommentService {
 
         int totalComments = commentRepository.countByEventIdAndUrl(eventId, url);
 
-        String crawlTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        String crawlTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm"));
 
         return CommentConverter.toCommentListDTO(comments.getContent(), crawlTime, totalComments);
     }
 
-    // 당첨자 조건별 랜덤 추첨
-    public CommentResponseDTO.WinnerResponseDTO drawWinners(Long eventId, String startDate, String endDate, int winnerCount, List<String> keywords, String userId) {
+    // 당첨자 조건별 랜덤 추첨(댓글 이벤트)
+    public CommentResponseDTO.WinnerResponseDTO drawWinners(CommentRequestDTO.WinnerRequestDTO request, String userId) {
         Member member = memberRepository.findByUserIdAndStatusNot(userId, UserStatus.DELETED)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
-        Event event = eventRepository.findByIdAndMemberId(eventId, member.getId())
+        Event event = eventRepository.findByIdAndMemberId(request.getEventId(), member.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
-        // String을 LocalDate로 변환하고 LocalDateTime으로 변환
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate start = LocalDate.parse(startDate, dateFormatter);
-        LocalDate end = LocalDate.parse(endDate, dateFormatter);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+        LocalDateTime startDateTime = LocalDateTime.parse(request.getStartDate(), dateTimeFormatter);
+        LocalDateTime endDateTime = LocalDateTime.parse(request.getEndDate(), dateTimeFormatter);
 
-        // LocalDateTime으로 변환
-        LocalDateTime startDateTime = start.atStartOfDay();
-        LocalDateTime endDateTime = end.atTime(LocalTime.MAX);
-
-        // 당첨자 추첨 로직
         List<Comment> comments = commentRepository.findByEventIdAndCommentDateBetween(event.getId(), startDateTime, endDateTime);
 
-        // 키워드 필터링(OR 로직)
+        // 키워드 필터링(OR 로직) 및 minLength 필터링 추가
         List<Comment> filteredComments = comments.stream()
-                .filter(comment -> keywords.stream().anyMatch(keyword -> comment.getCommentText().contains(keyword)))
+                .filter(comment -> request.getKeywords().stream().anyMatch(keyword -> comment.getCommentText().contains(keyword)))
+                .filter(comment -> comment.getCommentText().length() >= request.getMinLength())
                 .collect(Collectors.toList());
 
         // 랜덤 추첨
         Collections.shuffle(filteredComments);
-        List<Comment> winners = filteredComments.stream().limit(winnerCount).collect(Collectors.toList());
+        List<Comment> winners = filteredComments.stream().limit(request.getWinnerCount()).collect(Collectors.toList());
 
-        return CommentConverter.toWinnerResponseDTO(winners, winnerCount, startDate, endDate);
+        return CommentConverter.toWinnerResponseDTO(winners, request);
     }
 
 

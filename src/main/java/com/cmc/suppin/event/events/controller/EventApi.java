@@ -31,17 +31,14 @@ public class EventApi {
     private final EventService eventService;
 
     @GetMapping("/all")
-    @Operation(summary = "전체 이벤트 조회 API", description = "로그인한 사용자의 모든 이벤트와 설문 및 댓글 수를 조회합니다., JWT 토큰만 주시면 됩니다.")
+    @Operation(summary = "전체 이벤트 조회 API", description = "사용자의 모든 이벤트와 설문 및 댓글 수를 조회합니다.")
     public ResponseEntity<ApiResponse<List<EventResponseDTO.EventInfoDTO>>> getAllEventsWithCounts(@CurrentAccount Account account) {
         List<EventResponseDTO.EventInfoDTO> events = eventService.getAllEvents(account.userId());
         return ResponseEntity.ok(ApiResponse.of(events));
     }
 
     @PostMapping("/new/comment/crawling")
-    @Operation(summary = "댓글 이벤트 생성 API",
-            description = "Request : type(ENUM 타입으로, 'COMMENT와 SURVEY' 둘 중 하나를 입력해주시면 됩니다), " +
-                    "title, description, url, startDate(yyyy-MM-dd), endDate(yyyy-MM-dd), announcementDate(yyyy-MM-dd)<br><br>" +
-                    "Response로 제공되는 eventId를 이용하여 타 API들을 호출해주시면 됩니다.")
+    @Operation(summary = "댓글 이벤트 생성 API", description = "댓글 이벤트를 생성합니다. 자세한 요청 및 응답 형식은 노션 API 문서를 참고하시면 됩니다.")
     public ResponseEntity<ApiResponse<EventResponseDTO.EventInfoDTO>> createCommentEvent(@RequestBody @Valid EventRequestDTO.CommentEventCreateDTO request, @CurrentAccount Account account) {
         Event event = eventService.createCommentEvent(request, account.userId());
         EventResponseDTO.EventInfoDTO response = EventConverter.toEventInfoDTO(event);
@@ -49,10 +46,7 @@ public class EventApi {
     }
 
     @PostMapping("/new/survey")
-    @Operation(summary = "설문조사 이벤트 생성 API",
-            description = "Request : type(ENUM 타입으로, 'COMMENT와 SURVEY' 둘 중 하나를 입력해주시면 됩니다), " +
-                    "title, description, startDate(yyyy-MM-dd), endDate(yyyy-MM-dd), announcementDate(yyyy-MM-dd)<br><br>" +
-                    "Response로 제공되는 eventId를 이용하여 타 API들을 호출해주시면 됩니다.")
+    @Operation(summary = "설문 이벤트 생성 API", description = "설문 이벤트를 생성합니다. 자세한 요청 및 응답 형식은 노션 API 문서를 참고하시면 됩니다.")
     public ResponseEntity<ApiResponse<EventResponseDTO.EventInfoDTO>> createSurveyEvent(@RequestBody @Valid EventRequestDTO.SurveyEventCreateDTO request, @CurrentAccount Account account) {
         Event event = eventService.createSurveyEvent(request, account.userId());
         EventResponseDTO.EventInfoDTO response = EventConverter.toEventInfoDTO(event);

@@ -36,6 +36,7 @@ public class CommentResponseDTO {
     @Builder
     public static class WinnerResponseDTO {
         private int winnerCount;
+        private int minLength;
         private String startDate;
         private String endDate;
         private List<CommentDetailDTO> winners;

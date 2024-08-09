@@ -41,7 +41,7 @@ public class Event extends BaseDateTimeEntity {
     @Column(columnDefinition = "VARCHAR(100)", nullable = false)
     private String title;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     @Enumerated(EnumType.STRING)
