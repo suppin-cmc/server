@@ -1,5 +1,6 @@
 package com.cmc.suppin.event.crawl.controller;
 
+import com.cmc.suppin.event.crawl.controller.dto.CommentRequestDTO;
 import com.cmc.suppin.event.crawl.controller.dto.CommentResponseDTO;
 import com.cmc.suppin.event.crawl.service.CommentService;
 import com.cmc.suppin.global.response.ApiResponse;
@@ -8,14 +9,12 @@ import com.cmc.suppin.global.security.reslover.CurrentAccount;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -44,16 +43,12 @@ public class CommentApi {
         return ResponseEntity.ok(ApiResponse.of(comments));
     }
 
-    @GetMapping("/draft-winners")
+    @PostMapping("/draft-winners")
     @Operation(summary = "조건별 당첨자 추첨 API(댓글 이벤트)", description = "주어진 조건에 따라 이벤트의 당첨자를 추첨합니다.")
     public ResponseEntity<ApiResponse<CommentResponseDTO.WinnerResponseDTO>> drawWinners(
-            @RequestParam Long eventId,
-            @RequestParam String startDate,
-            @RequestParam String endDate,
-            @RequestParam int winnerCount,
-            @RequestParam List<String> keywords,
+            @RequestBody @Valid CommentRequestDTO.WinnerRequestDTO request,
             @CurrentAccount Account account) {
-        CommentResponseDTO.WinnerResponseDTO winners = commentService.drawWinners(eventId, startDate, endDate, winnerCount, keywords, account.userId());
+        CommentResponseDTO.WinnerResponseDTO winners = commentService.drawWinners(request, account.userId());
         return ResponseEntity.ok(ApiResponse.of(winners));
     }
 
