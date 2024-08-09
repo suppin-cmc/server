@@ -69,6 +69,7 @@ public class MemberConverter {
                 .name(member.getName())
                 .email(member.getEmail())
                 .phoneNumber(member.getPhoneNumber())
+                .userType(member.getUserType())
                 .createdAt(member.getCreatedAt())
                 .build();
     }
