@@ -33,8 +33,8 @@ public class CrawlApi {
                     "Response<br>" +
                     "- 요청된 URL과 중복된 댓글 수집 이력이 있을 경우 '검증 및 확인되었습니다.' 출력<br>" +
                     "- 요청된 URL과 중복된 댓글 수집 이력이 없을 경우 '수집 이력이 없습니다.' 출력")
-    public ResponseEntity<ApiResponse<String>> checkExistingComments(@RequestParam String url, @RequestParam Long eventId, @CurrentAccount Account account) {
-        String message = crawlService.checkExistingComments(url, eventId, account.userId());
+    public ResponseEntity<ApiResponse<String>> checkExistingComments(@RequestParam String url, @CurrentAccount Account account) {
+        String message = crawlService.checkExistingComments(url, account.userId());
         if (message != null) {
             return ResponseEntity.ok(ApiResponse.of(ResponseCode.SUCCESS, message));
         }
