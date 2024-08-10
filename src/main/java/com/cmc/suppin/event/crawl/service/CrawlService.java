@@ -39,14 +39,11 @@ public class CrawlService {
     private final EventRepository eventRepository;
     private final MemberRepository memberRepository;
 
-    public String checkExistingComments(String url, Long eventId, String userId) {
+    public String checkExistingComments(String url, String userId) {
         Member member = memberRepository.findByUserIdAndStatusNot(userId, UserStatus.DELETED)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
-        Event event = eventRepository.findByIdAndMemberId(eventId, member.getId())
-                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
-
-        List<Comment> existingComments = commentRepository.findByUrlAndEventId(url, eventId);
+        List<Comment> existingComments = commentRepository.findByUrl(url);
         if (!existingComments.isEmpty()) {
             LocalDateTime firstCommentDate = existingComments.get(0).getCreatedAt();
             return "동일한 URL의 댓글을 " + firstCommentDate.toLocalDate() + " 일자에 수집한 이력이 있습니다.";
