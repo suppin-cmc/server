@@ -3,6 +3,7 @@ package com.cmc.suppin.fcm.controller;
 import com.cmc.suppin.fcm.controller.dto.FcmSendDTO;
 import com.cmc.suppin.fcm.service.FcmService;
 import com.cmc.suppin.global.response.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import java.io.IOException;
 
 @Slf4j
 @RestController
+@Tag(name = "FCM", description = "FCM 푸시알림 관련 API")
 @RequestMapping("/api/v1/fcm")
 public class FcmController {
 
