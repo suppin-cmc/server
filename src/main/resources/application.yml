@@ -1,6 +1,7 @@
 spring:
   server:
     port: 8080
+    connection-timeout: 15m
   jackson:
     time-zone: Asia/Seoul
   datasource:
@@ -38,6 +39,9 @@ spring:
     protocol: smtp
     default-encoding: UTF-8
     test-connection: false
+  mvc:
+    async:
+      request-timeout: 15m
 
 jwt:
   token:
