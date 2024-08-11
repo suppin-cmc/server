@@ -58,7 +58,7 @@ public class MemberApi {
     @GetMapping("/checkUserId")
     @Operation(summary = "아이디 중복 체크 API", description = "입력한 아이디가 중복된 id인지 검증합니다. 자세한 요청 및 응답 형식은 노션 API 문서를 참고하시면 됩니다.")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(description = "중복이면 false, 중복 아니면 true")
-    public ResponseEntity<ApiResponse<MemberResponseDTO.IdConfirmResultDTO>> checkUserId(@RequestParam String userId) {
+    public ResponseEntity<ApiResponse<MemberResponseDTO.IdConfirmResultDTO>> checkUserId(@RequestParam("userId") String userId) {
         boolean checkUserId = memberService.confirmUserId(userId);
 
         return ResponseEntity.ok(ApiResponse.confirm(MemberConverter.toIdConfirmResultDTO(checkUserId)));
@@ -67,7 +67,7 @@ public class MemberApi {
     // 이메일 중복 체크
     @GetMapping("/checkEmail")
     @Operation(summary = "이메일 중복 체크 API", description = "입력한 이메일이 중복된 이메일인지 검증합니다. 자세한 요청 및 응답 형식은 노션 API 문서를 참고하시면 됩니다.")
-    public ResponseEntity<ApiResponse<MemberResponseDTO.EmailConfirmResultDTO>> checkEmail(@RequestParam String email) {
+    public ResponseEntity<ApiResponse<MemberResponseDTO.EmailConfirmResultDTO>> checkEmail(@RequestParam("email") String email) {
         boolean checkEmail = memberService.confirmEmail(email);
 
         return ResponseEntity.ok(ApiResponse.confirm(MemberConverter.toEmailConfirmResultDTO(checkEmail)));
@@ -111,7 +111,7 @@ public class MemberApi {
     // 현재 비밀번호 확인
     @GetMapping("/password/check")
     @Operation(summary = "현재 비밀번호 확인 API", description = "request : password")
-    public ResponseEntity<ApiResponse<MemberResponseDTO.CheckPasswordDTO>> checkPassword(@RequestParam String password, @CurrentAccount Account account) {
+    public ResponseEntity<ApiResponse<MemberResponseDTO.CheckPasswordDTO>> checkPassword(@RequestParam("password") String password, @CurrentAccount Account account) {
         memberService.checkPassword(password, account.id());
         return ResponseEntity.ok(ApiResponse.confirm(ResponseCode.CONFIRM));
     }
