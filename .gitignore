@@ -4,6 +4,8 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+/src/main/resources/firebase/
+/src/main/resources/firebase/suppin-a5657-firebase-adminsdk-s75m9-d65cc88029.json
 
 ### STS ###
 .apt_generated
