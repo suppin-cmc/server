@@ -3,18 +3,23 @@ package com.cmc.suppin.fcm.config;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.PostConstruct;
+import java.io.FileInputStream;
 import java.io.InputStream;
 
 @Configuration
 public class FirebaseConfig {
+
+    @Value("${FIREBASE_CONFIG_PATH}")
+    private String firebaseConfigPath;
+
     @PostConstruct
     public void init() {
         try {
-            InputStream serviceAccount = new ClassPathResource("suppin-a5657-firebase-adminsdk.json").getInputStream();
+            InputStream serviceAccount = new FileInputStream(firebaseConfigPath);
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .build();

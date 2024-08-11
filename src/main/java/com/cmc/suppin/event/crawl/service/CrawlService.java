@@ -72,8 +72,13 @@ public class CrawlService {
             }
         }
 
-        // 크롤링 코드 실행 (생략)
-        System.setProperty("webdriver.chrome.driver", "src/main/resources/drivers/chromedriver");
+        // 크롤링 코드 실행
+        String chromeDriverPath = System.getenv("CHROME_DRIVER_PATH");
+        if (chromeDriverPath != null && !chromeDriverPath.isEmpty()) {
+            System.setProperty("webdriver.chrome.driver", chromeDriverPath);
+        } else {
+            throw new RuntimeException("CHROME_DRIVER_PATH 환경 변수가 설정되지 않았습니다.");
+        }
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
@@ -95,7 +100,7 @@ public class CrawlService {
         try {
             Thread.sleep(5000); // 초기 로딩 대기
 
-            long endTime = System.currentTimeMillis() + 240000; // 스크롤 시간 조정 (필요에 따라 조정)
+            long endTime = System.currentTimeMillis() + 300000; // 스크롤 시간 조정 (필요에 따라 조정)
             JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
 
             while (System.currentTimeMillis() < endTime) {
