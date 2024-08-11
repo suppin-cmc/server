@@ -100,17 +100,22 @@ public class CrawlService {
         try {
             Thread.sleep(5000); // 초기 로딩 대기
 
-            long endTime = System.currentTimeMillis() + 300000; // 스크롤 시간 조정 (필요에 따라 조정)
+            long endTime = System.currentTimeMillis() + 600000; // 스크롤 시간을 10분으로 설정 (600,000ms)
             JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+
+            int previousCommentCount = 0;
+            int currentCommentCount;
 
             while (System.currentTimeMillis() < endTime) {
                 jsExecutor.executeScript("window.scrollTo(0, document.documentElement.scrollHeight);");
 
-                Thread.sleep(1000);
+                Thread.sleep(1000); // 1초 대기
 
                 String pageSource = driver.getPageSource();
                 Document doc = Jsoup.parse(pageSource);
                 Elements comments = doc.select("ytd-comment-thread-renderer");
+
+                currentCommentCount = comments.size();
 
                 for (Element commentElement : comments) {
                     String author = commentElement.select("#author-text span").text();
@@ -126,6 +131,13 @@ public class CrawlService {
                         commentRepository.save(comment);
                     }
                 }
+
+                // 더 이상 새로운 댓글이 없을 때, 크롤링 종료
+                if (currentCommentCount == previousCommentCount) {
+                    break; // 새로운 댓글이 로드되지 않으면 루프를 종료합니다.
+                }
+
+                previousCommentCount = currentCommentCount;
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
