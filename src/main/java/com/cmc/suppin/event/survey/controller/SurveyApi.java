@@ -36,7 +36,7 @@ public class SurveyApi {
 
     @GetMapping("/{surveyId}")
     @Operation(summary = "설문지 조회 API", description = "생성된 설문지 전체 정보를 조회합니다. 자세한 요청 및 응답 형식은 노션 API 문서를 참고해주세요.")
-    public ResponseEntity<ApiResponse<SurveyResponseDTO.SurveyResultDTO>> getSurvey(@PathVariable Long surveyId) {
+    public ResponseEntity<ApiResponse<SurveyResponseDTO.SurveyResultDTO>> getSurvey(@PathVariable("surveyId") Long surveyId) {
         SurveyResponseDTO.SurveyResultDTO response = surveyService.getSurvey(surveyId);
         return ResponseEntity.ok(ApiResponse.of(response));
     }
@@ -51,12 +51,12 @@ public class SurveyApi {
     @GetMapping("/{surveyId}/answers/{questionId}")
     @Operation(summary = "질문별 설문 응답 결과 조회 API", description = "특정 질문에 따라 해당 질문에 대한 설문 결과를 응답합니다. 자세한 요청 및 응답 형식은 노션 API 문서를 참고해주세요.")
     public ResponseEntity<ApiResponse<SurveyResponseDTO.SurveyAnswerResultDTO>> getSurveyAnswers(
-            @PathVariable Long surveyId,
-            @PathVariable Long questionId,
+            @PathVariable("surveyId") Long surveyId,
+            @PathVariable("questionId") Long questionId,
             @Parameter(description = "페이지 번호(1부터 시작)", example = "1")
-            @RequestParam int page,
+            @RequestParam("page") int page,
             @Parameter(description = "페이지 크기", example = "10")
-            @RequestParam int size,
+            @RequestParam("size") int size,
             @CurrentAccount Account account) {
         SurveyResponseDTO.SurveyAnswerResultDTO response = surveyService.getSurveyAnswers(surveyId, questionId, page, size, account.userId());
         return ResponseEntity.ok(ApiResponse.of(response));
@@ -75,14 +75,14 @@ public class SurveyApi {
     @GetMapping("/winners/{surveyId}/{participantId}")
     @Operation(summary = "당첨자 세부 정보 조회 API", description = "설문 이벤트의 당첨자(익명 참여자) 정보를 조회하며, 해당 참여자가 응답한 모든 설문 내용을 반환합니다. 자세한 요청 및 응답 형식은 노션 API 문서를 참고해주세요.")
     public ResponseEntity<ApiResponse<SurveyResponseDTO.WinnerDetailDTO>> getWinnerDetails(
-            @PathVariable Long surveyId, @PathVariable Long participantId) {
+            @PathVariable("surveyId") Long surveyId, @PathVariable("participantId") Long participantId) {
         SurveyResponseDTO.WinnerDetailDTO winnerDetails = surveyService.getWinnerDetails(surveyId, participantId);
         return ResponseEntity.ok(ApiResponse.of(winnerDetails));
     }
 
     @DeleteMapping("/winners")
     @Operation(summary = "당첨자 리스트 삭제 API(당첨자 재추첨 시, 기존 당첨자 리스트를 삭제 후 진행 해야합니다.)", description = "해당 설문조사의 모든 당첨자들의 isWinner 값을 false로 변경합니다.")
-    public ResponseEntity<ApiResponse<Void>> deleteWinners(@RequestParam Long surveyId) {
+    public ResponseEntity<ApiResponse<Void>> deleteWinners(@RequestParam("surveyId") Long surveyId) {
         surveyService.deleteWinners(surveyId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.SUCCESS));
     }

@@ -62,7 +62,7 @@ public class EventApi {
 
     @DeleteMapping("/{eventId}")
     @Operation(summary = "이벤트 삭제 API", description = "PathVariable: eventId, JWT 토큰만 주시면 됩니다.")
-    public ResponseEntity<ApiResponse<Void>> deleteEvent(@PathVariable Long eventId, @CurrentAccount Account account) {
+    public ResponseEntity<ApiResponse<Void>> deleteEvent(@PathVariable("eventId") Long eventId, @CurrentAccount Account account) {
         eventService.deleteEvent(eventId, account.userId());
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.SUCCESS));
     }
