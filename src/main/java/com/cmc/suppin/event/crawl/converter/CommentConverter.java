@@ -2,6 +2,7 @@ package com.cmc.suppin.event.crawl.converter;
 
 import com.cmc.suppin.event.crawl.controller.dto.CommentRequestDTO;
 import com.cmc.suppin.event.crawl.controller.dto.CommentResponseDTO;
+import com.cmc.suppin.event.crawl.controller.dto.CrawlResponseDTO;
 import com.cmc.suppin.event.crawl.domain.Comment;
 import com.cmc.suppin.event.events.domain.Event;
 
@@ -54,6 +55,13 @@ public class CommentConverter {
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .winners(winnerDetails)
+                .build();
+    }
+
+    public static CrawlResponseDTO.CrawlResultDTO toCrawlResultDTO(LocalDateTime crawlingDate, int totalCommentCount) {
+        return CrawlResponseDTO.CrawlResultDTO.builder()
+                .crawlingDate(crawlingDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .totalCommentCount(totalCommentCount)
                 .build();
     }
 }
