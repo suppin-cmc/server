@@ -1,5 +1,6 @@
 package com.cmc.suppin.event.crawl.service;
 
+import com.cmc.suppin.event.crawl.controller.dto.CrawlResponseDTO;
 import com.cmc.suppin.event.crawl.converter.CommentConverter;
 import com.cmc.suppin.event.crawl.converter.DateConverter;
 import com.cmc.suppin.event.crawl.domain.Comment;
@@ -52,7 +53,7 @@ public class CrawlService {
         return null;
     }
 
-    public void crawlYoutubeComments(String url, Long eventId, String userId, boolean forceUpdate) {
+    public CrawlResponseDTO.CrawlResultDTO crawlYoutubeComments(String url, Long eventId, String userId, boolean forceUpdate) {
         Member member = memberRepository.findByUserIdAndStatusNot(userId, UserStatus.DELETED)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
@@ -144,6 +145,7 @@ public class CrawlService {
         } finally {
             driver.quit();
         }
+        return CommentConverter.toCrawlResultDTO(LocalDateTime.now(), uniqueComments.size());
     }
 }
 

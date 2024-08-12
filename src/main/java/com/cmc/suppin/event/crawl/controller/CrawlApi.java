@@ -1,5 +1,6 @@
 package com.cmc.suppin.event.crawl.controller;
 
+import com.cmc.suppin.event.crawl.controller.dto.CrawlResponseDTO;
 import com.cmc.suppin.event.crawl.service.CrawlService;
 import com.cmc.suppin.global.response.ApiResponse;
 import com.cmc.suppin.global.response.ResponseCode;
@@ -51,9 +52,9 @@ public class CrawlApi {
                     "크롤링하려는 URL이 중복되지 않았을 때의 요청이기 때문에, 새로운 댓글을 크롤링합니다. <br>" +
                     "- DB에 기존 댓글이 존재하는 경우: 크롤링을 중지하고 예외를 던집니다. <br>" +
                     "- DB에 기존 댓글이 존재하지 않는 경우: 새로운 댓글을 크롤링하고 이를 DB에 저장합니다.")
-    public ResponseEntity<ApiResponse<String>> crawlYoutubeComments(@RequestParam("url") String url, @RequestParam("eventId") Long eventId, @RequestParam("forceUpdate") boolean forceUpdate, @CurrentAccount Account account) {
-        crawlService.crawlYoutubeComments(url, eventId, account.userId(), forceUpdate);
-        return ResponseEntity.ok(ApiResponse.of(ResponseCode.SUCCESS, "댓글 수집이 완료되었습니다."));
+    public ResponseEntity<ApiResponse<CrawlResponseDTO.CrawlResultDTO>> crawlYoutubeComments(@RequestParam("url") String url, @RequestParam("eventId") Long eventId, @RequestParam("forceUpdate") boolean forceUpdate, @CurrentAccount Account account) {
+        CrawlResponseDTO.CrawlResultDTO crawlResultDTO = crawlService.crawlYoutubeComments(url, eventId, account.userId(), forceUpdate);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.SUCCESS, crawlResultDTO));
     }
 
 //    @GetMapping("/count")
