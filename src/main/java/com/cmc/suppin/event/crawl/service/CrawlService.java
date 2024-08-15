@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,8 +47,9 @@ public class CrawlService {
 
         List<Comment> existingComments = commentRepository.findByUrl(url);
         if (!existingComments.isEmpty()) {
-            LocalDateTime firstCommentDate = existingComments.get(0).getCreatedAt();
-            return "동일한 URL의 댓글을 " + firstCommentDate.toLocalDate() + " 일자에 수집한 이력이 있습니다.";
+            LocalDateTime firstCommentDate = existingComments.get(0).getCrawlTime();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+            return "동일한 URL의 댓글을 " + firstCommentDate.format(formatter) + " 일자에 수집한 이력이 있습니다.";
         }
 
         return null;
