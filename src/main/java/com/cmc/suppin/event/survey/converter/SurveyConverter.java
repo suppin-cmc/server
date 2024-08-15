@@ -6,6 +6,8 @@ import com.cmc.suppin.event.survey.controller.dto.SurveyResponseDTO;
 import com.cmc.suppin.event.survey.domain.*;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -123,10 +125,12 @@ public class SurveyConverter {
     }
 
     public static SurveyResponseDTO.RandomSelectionResponseDTO.SelectionCriteriaDTO toSelectionCriteriaDTO(SurveyRequestDTO.RandomSelectionRequestDTO request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+
         return SurveyResponseDTO.RandomSelectionResponseDTO.SelectionCriteriaDTO.builder()
                 .winnerCount(request.getWinnerCount())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+                .startDate(LocalDateTime.parse(request.getStartDate(), formatter))
+                .endDate(LocalDateTime.parse(request.getEndDate(), formatter))
                 .minLength(request.getMinLength())
                 .keywords(request.getKeywords())
                 .build();

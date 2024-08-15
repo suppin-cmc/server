@@ -20,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -172,8 +174,10 @@ public class SurveyService {
                 .collect(Collectors.toList());
 
         // 조건에 맞는 주관식 답변 조회
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+
         List<Answer> eligibleAnswers = answerCustomRepository.findEligibleAnswers(
-                request.getQuestionId(), request.getStartDate(), request.getEndDate(),
+                request.getQuestionId(), LocalDateTime.parse(request.getStartDate(), formatter), LocalDateTime.parse(request.getEndDate(), formatter),
                 request.getMinLength(), request.getKeywords());
 
         // 랜덤 추첨
