@@ -39,7 +39,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 "https://api.suppin.store",
                 "https://suppin.store",
                 "http://192.168.200.120:3000",  // 테스트 디바이스 IP 허용
-                "https://coherent-midge-probably.ngrok-free.app"
+                "https://coherent-midge-probably.ngrok-free.app",
+                "https://suppin-servey.vercel.app/"
         ).toArray(String[]::new);
     }
 }

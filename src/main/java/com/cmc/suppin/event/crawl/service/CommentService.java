@@ -48,7 +48,7 @@ public class CommentService {
 
         int totalComments = commentRepository.countByEventIdAndUrl(eventId, url);
 
-        String crawlTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm"));
+        String crawlTime = comments.isEmpty() ? "" : comments.getContent().get(0).getCrawlTime().format(DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm"));
 
         return CommentConverter.toCommentListDTO(comments.getContent(), crawlTime, totalComments);
     }

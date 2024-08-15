@@ -26,7 +26,8 @@ public class EventResponseDTO {
         private Integer surveyCount;
         private Integer commentCount;
         private EventStatus status;
-
+        private Long surveyId;
+        private String uuid;
     }
 
     @Builder

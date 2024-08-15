@@ -3,6 +3,7 @@ package com.cmc.suppin.event.events.converter;
 import com.cmc.suppin.event.events.controller.dto.EventRequestDTO;
 import com.cmc.suppin.event.events.controller.dto.EventResponseDTO;
 import com.cmc.suppin.event.events.domain.Event;
+import com.cmc.suppin.event.survey.domain.Survey;
 import com.cmc.suppin.global.enums.EventType;
 import com.cmc.suppin.member.domain.Member;
 
@@ -64,6 +65,11 @@ public class EventConverter {
                 .mapToInt(survey -> survey.getAnonymousParticipantList().size())
                 .sum();
 
+        // 이벤트에 설문이 존재하는 경우 surveyId와 uuid 값을 설정
+        Survey survey = event.getSurveyList().stream().findFirst().orElse(null);
+        Long surveyId = (survey != null) ? survey.getId() : null;
+        String uuid = (survey != null) ? survey.getUuid() : null;
+
         return EventResponseDTO.EventInfoDTO.builder()
                 .eventId(event.getId())
                 .type(event.getType())
@@ -75,6 +81,8 @@ public class EventConverter {
                 .surveyCount(surveyAnswerCount)
                 .commentCount(event.getCommentList().size())
                 .status(event.getStatus())
+                .surveyId(surveyId)
+                .uuid(uuid)
                 .build();
     }
 
