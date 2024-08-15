@@ -25,6 +25,7 @@ public class Member extends BaseDateTimeEntity {
     private Long id;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
     private List<Event> eventList = new ArrayList<>();
 
     @Column(columnDefinition = "VARCHAR(30)", nullable = false)
@@ -41,7 +42,7 @@ public class Member extends BaseDateTimeEntity {
 
     @Column(columnDefinition = "VARCHAR(13)", nullable = false)
     private String phoneNumber;
-    
+
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
