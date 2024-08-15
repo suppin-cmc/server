@@ -65,10 +65,14 @@ public class CrawlService {
         if (forceUpdate) {
             // 기존 댓글 삭제
             commentRepository.deleteByUrlAndEventId(url, eventId);
+
+            // 삭제 후, 확인을 위한 로그 출력 또는 추가 검증
+            List<Comment> deletedComments = commentRepository.findByUrlAndEventId(url, eventId);
+            if (!deletedComments.isEmpty()) {
+                throw new RuntimeException("기존 댓글 삭제에 실패했습니다.");
+            }
         } else {
             // 기존 댓글이 존재하는 경우: 크롤링을 중지하고 예외를 던집니다.
-            // 기존 댓글이 존재하지 않는 경우: 새로운 댓글을 크롤링하고 이를 DB에 저장합니다.
-
             List<Comment> existingComments = commentRepository.findByUrlAndEventId(url, eventId);
             if (!existingComments.isEmpty()) {
                 throw new CrawlException(CrawlErrorCode.DUPLICATE_URL);
@@ -112,7 +116,7 @@ public class CrawlService {
             while (System.currentTimeMillis() < endTime) {
                 jsExecutor.executeScript("window.scrollTo(0, document.documentElement.scrollHeight);");
 
-                Thread.sleep(1000); // 1초 대기
+                Thread.sleep(3000); // 3초 대기
 
                 String pageSource = driver.getPageSource();
                 Document doc = Jsoup.parse(pageSource);
@@ -151,5 +155,6 @@ public class CrawlService {
         }
         return CommentConverter.toCrawlResultDTO(LocalDateTime.now(), uniqueComments.size());
     }
+
 }
 
