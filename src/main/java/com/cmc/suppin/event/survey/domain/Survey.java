@@ -26,12 +26,15 @@ public class Survey extends BaseDateTimeEntity {
     private Event event;
 
     @OneToMany(mappedBy = "survey", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<PersonalInfoCollectOption> personalInfoList = new ArrayList<>();
 
     @OneToMany(mappedBy = "survey")
+    @Builder.Default
     private List<Question> questionList = new ArrayList<>();
 
     @OneToMany(mappedBy = "survey")
+    @Builder.Default
     private List<AnonymousParticipant> anonymousParticipantList = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")
@@ -39,5 +42,8 @@ public class Survey extends BaseDateTimeEntity {
 
     @Column(nullable = false, updatable = false, unique = true)
     private String uuid;
+
+    @Column(columnDefinition = "TEXT")
+    private String consentFormHtml;
 }
 

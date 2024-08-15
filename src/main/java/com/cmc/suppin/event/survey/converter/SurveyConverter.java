@@ -11,10 +11,11 @@ import java.util.stream.Collectors;
 
 public class SurveyConverter {
 
-    public static Survey toSurveyEntity(Event event, String uuid) {
+    public static Survey toSurveyEntity(Event event, String uuid, String consentFormHtml) {
         return Survey.builder()
                 .event(event)
                 .uuid(uuid)
+                .consentFormHtml(consentFormHtml)
                 .build();
     }
 

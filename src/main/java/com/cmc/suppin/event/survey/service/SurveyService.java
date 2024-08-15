@@ -54,7 +54,7 @@ public class SurveyService {
 
         // Survey 엔티티 생성 및 저장
         String uuid = UUID.randomUUID().toString();
-        Survey survey = SurveyConverter.toSurveyEntity(event, uuid);
+        Survey survey = SurveyConverter.toSurveyEntity(event, uuid, request.getConsentFormHtml());
         surveyRepository.save(survey);
 
         // 각 개인정보 항목 처리 및 저장
