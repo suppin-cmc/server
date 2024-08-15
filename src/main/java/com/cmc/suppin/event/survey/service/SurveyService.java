@@ -231,4 +231,19 @@ public class SurveyService {
             anonymousParticipantRepository.save(participant);
         }
     }
+
+    public List<SurveyResponseDTO.SurveyEventWinners> getSurveyEventWinners(Long surveyId, String userId) {
+        Member member = memberRepository.findByUserIdAndStatusNot(userId, UserStatus.DELETED)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        Survey survey = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
+
+        List<AnonymousParticipant> winners = anonymousParticipantRepository.findBySurveyAndIsWinnerTrue(survey);
+
+        return winners.stream()
+                .map(SurveyConverter::toSurveyEventWinners)
+                .collect(Collectors.toList());
+    }
+
 }

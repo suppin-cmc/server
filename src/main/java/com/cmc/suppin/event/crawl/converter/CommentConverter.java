@@ -64,5 +64,13 @@ public class CommentConverter {
                 .totalCommentCount(totalCommentCount)
                 .build();
     }
+
+    public static CommentResponseDTO.CommentEventWinners toCommentEventWinners(Comment comment) {
+        return CommentResponseDTO.CommentEventWinners.builder()
+                .author(comment.getAuthor())
+                .commentText(comment.getCommentText())
+                .commentDate(comment.getCommentDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .build();
+    }
 }
 

@@ -1,6 +1,7 @@
 package com.cmc.suppin.event.survey.domain.repository;
 
 import com.cmc.suppin.event.survey.domain.AnonymousParticipant;
+import com.cmc.suppin.event.survey.domain.Survey;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface AnonymousParticipantRepository extends JpaRepository<AnonymousP
 
     List<AnonymousParticipant> findBySurveyIdAndIsWinnerTrue(Long surveyId);
 
+    List<AnonymousParticipant> findBySurveyAndIsWinnerTrue(Survey survey);
 }

@@ -161,4 +161,20 @@ public class SurveyConverter {
                 .answers(answers)
                 .build();
     }
+
+    public static SurveyResponseDTO.SurveyEventWinners toSurveyEventWinners(AnonymousParticipant participant) {
+        return SurveyResponseDTO.SurveyEventWinners.builder()
+                .name(participant.getName())
+                .answers(participant.getAnswerList().stream()
+                        .map(answer -> SurveyResponseDTO.WinnerDetailDTO.AnswerDetailDTO.builder()
+                                .questionText(answer.getQuestion().getQuestionText())
+                                .answerText(answer.getAnswerText())
+                                .selectedOptions(answer.getAnswerOptionList().stream()
+                                        .map(answerOption -> answerOption.getQuestionOption().getOptionText())
+                                        .collect(Collectors.toList()))
+                                .build())
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
 }

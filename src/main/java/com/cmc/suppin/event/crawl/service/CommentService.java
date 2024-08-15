@@ -109,4 +109,15 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
+    public List<CommentResponseDTO.CommentEventWinners> getCommentEventWinners(Long eventId, String userId) {
+        Member member = memberRepository.findByUserIdAndStatusNot(userId, UserStatus.DELETED)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        List<Comment> winners = commentRepository.findByEventIdAndIsWinnerTrue(eventId);
+
+        return winners.stream()
+                .map(CommentConverter::toCommentEventWinners)
+                .collect(Collectors.toList());
+    }
+
 }
