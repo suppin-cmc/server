@@ -118,6 +118,8 @@ public class CrawlService {
 
                 currentCommentCount = comments.size();
 
+                LocalDateTime crawlTime = LocalDateTime.now();
+
                 for (Element commentElement : comments) {
                     String author = commentElement.select("#author-text span").text();
                     String text = commentElement.select("#content yt-attributed-string#content-text").text();
@@ -129,6 +131,7 @@ public class CrawlService {
                         // 엔티티 저장
                         LocalDateTime actualCommentDate = DateConverter.convertRelativeTime(time);
                         Comment comment = CommentConverter.toCommentEntity(author, text, actualCommentDate, url, event);
+                        comment.setCrawlTime(crawlTime);
                         commentRepository.save(comment);
                     }
                 }
@@ -137,7 +140,6 @@ public class CrawlService {
                 if (currentCommentCount == previousCommentCount) {
                     break; // 새로운 댓글이 로드되지 않으면 루프를 종료합니다.
                 }
-
                 previousCommentCount = currentCommentCount;
             }
         } catch (InterruptedException e) {

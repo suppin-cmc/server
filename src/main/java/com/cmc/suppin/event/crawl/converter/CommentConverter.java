@@ -60,7 +60,7 @@ public class CommentConverter {
 
     public static CrawlResponseDTO.CrawlResultDTO toCrawlResultDTO(LocalDateTime crawlingDate, int totalCommentCount) {
         return CrawlResponseDTO.CrawlResultDTO.builder()
-                .crawlingDate(crawlingDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
+                .crawlTime(crawlingDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")))
                 .totalCommentCount(totalCommentCount)
                 .build();
     }

@@ -38,4 +38,11 @@ public class Comment extends BaseDateTimeEntity {
     @Column(nullable = false)
     private LocalDateTime commentDate;
 
+    @Column(nullable = false)
+    private LocalDateTime crawlTime;
+
+    public void setCrawlTime(LocalDateTime crawlTime) {
+        this.crawlTime = crawlTime;
+    }
+
 }
