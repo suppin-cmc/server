@@ -12,7 +12,7 @@ public class CrawlResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class CrawlResultDTO {
-        private String crawlingDate;
+        private String crawlTime;
         private int totalCommentCount;
     }
 }
