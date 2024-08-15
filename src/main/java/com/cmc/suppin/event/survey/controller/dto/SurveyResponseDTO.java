@@ -31,6 +31,7 @@ public class SurveyResponseDTO {
         private String startDate;
         private String endDate;
         private String announcementDate;
+        private String consentFormHtml;
         private List<PersonalInfoOptionDTO> personalInfoOptions;
         private List<QuestionDTO> questions;
 
