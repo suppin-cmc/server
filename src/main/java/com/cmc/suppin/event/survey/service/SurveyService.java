@@ -92,6 +92,15 @@ public class SurveyService {
         return SurveyConverter.toSurveyResultDTO(survey, event);
     }
 
+    @Transactional(readOnly = true)
+    public SurveyResponseDTO.SurveyResultDTO getSurveyByUuid(String uuid) {
+        Survey survey = surveyRepository.findByUuid(uuid)
+                .orElseThrow(() -> new IllegalArgumentException("Survey not found for UUID: " + uuid));
+
+        Event event = survey.getEvent();
+        return SurveyConverter.toSurveyResultDTO(survey, event);
+    }
+
     // 설문 응답 저장
     @Transactional
     public void saveSurveyAnswers(SurveyRequestDTO.SurveyAnswerDTO request) {

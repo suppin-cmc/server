@@ -122,6 +122,7 @@ public class WebSecurityConfig {
                 antMatcher("/api/v1/members/join/**"),
                 antMatcher("/api/v1/members/checkUserId"),
                 antMatcher("/api/v1/members/checkEmail"),
+                antMatcher("/api/v1/survey/view/**"),
                 antMatcher("/api/v1/survey/reply/**")   // 설문조사 응답 시 적용
         );
         return requestMatchers.toArray(RequestMatcher[]::new);
