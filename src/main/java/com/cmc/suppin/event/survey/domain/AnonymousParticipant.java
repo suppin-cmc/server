@@ -25,6 +25,7 @@ public class AnonymousParticipant extends BaseDateTimeEntity {
     private Survey survey;
 
     @OneToMany(mappedBy = "anonymousParticipant")
+    @Builder.Default
     private List<Answer> answerList = new ArrayList<>();
 
     private String name;

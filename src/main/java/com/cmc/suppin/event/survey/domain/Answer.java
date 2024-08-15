@@ -30,6 +30,7 @@ public class Answer extends BaseDateTimeEntity {
     private AnonymousParticipant anonymousParticipant;
 
     @OneToMany(mappedBy = "answer")
+    @Builder.Default
     private List<AnswerOption> answerOptionList = new ArrayList<>();
 
     @Column(columnDefinition = "TEXT")

@@ -25,9 +25,11 @@ public class Question {
     private Survey survey;
 
     @OneToMany(mappedBy = "question")
+    @Builder.Default
     private List<QuestionOption> questionOptionList = new ArrayList<>();
 
     @OneToMany(mappedBy = "question")
+    @Builder.Default
     private List<Answer> answerList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
