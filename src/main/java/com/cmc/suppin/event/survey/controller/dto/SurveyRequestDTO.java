@@ -22,6 +22,7 @@ public class SurveyRequestDTO {
     public static class SurveyCreateDTO {
         @NotNull
         private Long eventId;
+        private String consentFormHtml; // 개인정보 수집 동의서 HTML 필드
         private List<PersonalInfoOptionDTO> personalInfoOptionList;
         private List<QuestionDTO> questionList;
 
