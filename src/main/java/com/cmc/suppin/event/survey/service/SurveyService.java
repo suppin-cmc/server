@@ -84,7 +84,7 @@ public class SurveyService {
 
     // 생성된 설문지 조회
     @Transactional(readOnly = true)
-    public SurveyResponseDTO.SurveyResultDTO getSurvey(Long surveyId) {
+    public SurveyResponseDTO.SurveyResultDTO getSurveyBySurveyId(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
                 .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
 

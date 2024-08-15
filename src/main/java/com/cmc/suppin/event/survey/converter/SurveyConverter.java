@@ -69,10 +69,12 @@ public class SurveyConverter {
                 .startDate(event.getStartDate().toString())
                 .endDate(event.getEndDate().toString())
                 .announcementDate(event.getAnnouncementDate().toString())
+                .consentFormHtml(survey.getConsentFormHtml())
                 .personalInfoOptions(personalInfoOptions)
                 .questions(questions)
                 .build();
     }
+
 
     public static SurveyResponseDTO.SurveyAnswerResultDTO toSurveyAnswerResultDTO(Question question, Page<Answer> answersPage) {
         List<SurveyResponseDTO.SurveyAnswerResultDTO.AnswerDTO> answers = answersPage.stream()
