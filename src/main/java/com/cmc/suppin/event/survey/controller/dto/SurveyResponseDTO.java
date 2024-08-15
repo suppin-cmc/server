@@ -129,4 +129,14 @@ public class SurveyResponseDTO {
             private List<String> selectedOptions; // 객관식 질문의 경우 선택된 옵션 리스트
         }
     }
+
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class SurveyEventWinners {
+        private String name;
+        private List<WinnerDetailDTO.AnswerDetailDTO> answers;
+    }
 }

@@ -1,10 +1,14 @@
 package com.cmc.suppin.event.events.controller;
 
+import com.cmc.suppin.event.crawl.controller.dto.CommentResponseDTO;
+import com.cmc.suppin.event.crawl.service.CommentService;
 import com.cmc.suppin.event.events.controller.dto.EventRequestDTO;
 import com.cmc.suppin.event.events.controller.dto.EventResponseDTO;
 import com.cmc.suppin.event.events.converter.EventConverter;
 import com.cmc.suppin.event.events.domain.Event;
 import com.cmc.suppin.event.events.service.EventService;
+import com.cmc.suppin.event.survey.controller.dto.SurveyResponseDTO;
+import com.cmc.suppin.event.survey.service.SurveyService;
 import com.cmc.suppin.global.response.ApiResponse;
 import com.cmc.suppin.global.response.ResponseCode;
 import com.cmc.suppin.global.security.reslover.Account;
@@ -29,6 +33,8 @@ import java.util.List;
 public class EventApi {
 
     private final EventService eventService;
+    private final CommentService commentService;
+    private final SurveyService surveyService;
 
     @GetMapping("/all")
     @Operation(summary = "전체 이벤트 조회 API", description = "사용자의 모든 이벤트와 설문 및 댓글 수를 조회합니다.")
@@ -65,5 +71,25 @@ public class EventApi {
     public ResponseEntity<ApiResponse<Void>> deleteEvent(@PathVariable("eventId") Long eventId, @CurrentAccount Account account) {
         eventService.deleteEvent(eventId, account.userId());
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.SUCCESS));
+    }
+
+    @GetMapping("/comment-winners")
+    @Operation(summary = "댓글 이벤트 당첨자 조회 API", description = "댓글 이벤트의 당첨자 리스트를 조회합니다.")
+    public ResponseEntity<ApiResponse<List<CommentResponseDTO.CommentEventWinners>>> getCommentEventWinners(
+            @RequestParam("eventId") Long eventId,
+            @CurrentAccount Account account) {
+
+        List<CommentResponseDTO.CommentEventWinners> winners = commentService.getCommentEventWinners(eventId, account.userId());
+        return ResponseEntity.ok(ApiResponse.of(winners));
+    }
+
+    @GetMapping("/survey-winners")
+    @Operation(summary = "설문 이벤트 당첨자 조회 API", description = "설문 이벤트의 당첨자 리스트를 조회합니다.")
+    public ResponseEntity<ApiResponse<List<SurveyResponseDTO.SurveyEventWinners>>> getSurveyEventWinners(
+            @RequestParam("surveyId") Long surveyId,
+            @CurrentAccount Account account) {
+
+        List<SurveyResponseDTO.SurveyEventWinners> winners = surveyService.getSurveyEventWinners(surveyId, account.userId());
+        return ResponseEntity.ok(ApiResponse.of(winners));
     }
 }

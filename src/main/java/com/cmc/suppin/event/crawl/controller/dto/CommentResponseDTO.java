@@ -41,4 +41,14 @@ public class CommentResponseDTO {
         private String endDate;
         private List<CommentDetailDTO> winners;
     }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class CommentEventWinners {
+        private String author;
+        private String commentText;
+        private String commentDate;
+    }
 }
