@@ -6,15 +6,18 @@ import com.cmc.suppin.event.survey.controller.dto.SurveyResponseDTO;
 import com.cmc.suppin.event.survey.domain.*;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class SurveyConverter {
 
-    public static Survey toSurveyEntity(Event event, String uuid) {
+    public static Survey toSurveyEntity(Event event, String uuid, String consentFormHtml) {
         return Survey.builder()
                 .event(event)
                 .uuid(uuid)
+                .consentFormHtml(consentFormHtml)
                 .build();
     }
 
@@ -68,10 +71,12 @@ public class SurveyConverter {
                 .startDate(event.getStartDate().toString())
                 .endDate(event.getEndDate().toString())
                 .announcementDate(event.getAnnouncementDate().toString())
+                .consentFormHtml(survey.getConsentFormHtml())
                 .personalInfoOptions(personalInfoOptions)
                 .questions(questions)
                 .build();
     }
+
 
     public static SurveyResponseDTO.SurveyAnswerResultDTO toSurveyAnswerResultDTO(Question question, Page<Answer> answersPage) {
         List<SurveyResponseDTO.SurveyAnswerResultDTO.AnswerDTO> answers = answersPage.stream()
@@ -120,10 +125,12 @@ public class SurveyConverter {
     }
 
     public static SurveyResponseDTO.RandomSelectionResponseDTO.SelectionCriteriaDTO toSelectionCriteriaDTO(SurveyRequestDTO.RandomSelectionRequestDTO request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+
         return SurveyResponseDTO.RandomSelectionResponseDTO.SelectionCriteriaDTO.builder()
                 .winnerCount(request.getWinnerCount())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
+                .startDate(LocalDateTime.parse(request.getStartDate(), formatter))
+                .endDate(LocalDateTime.parse(request.getEndDate(), formatter))
                 .minLength(request.getMinLength())
                 .keywords(request.getKeywords())
                 .build();
@@ -154,4 +161,20 @@ public class SurveyConverter {
                 .answers(answers)
                 .build();
     }
+
+    public static SurveyResponseDTO.SurveyEventWinners toSurveyEventWinners(AnonymousParticipant participant) {
+        return SurveyResponseDTO.SurveyEventWinners.builder()
+                .name(participant.getName())
+                .answers(participant.getAnswerList().stream()
+                        .map(answer -> SurveyResponseDTO.WinnerDetailDTO.AnswerDetailDTO.builder()
+                                .questionText(answer.getQuestion().getQuestionText())
+                                .answerText(answer.getAnswerText())
+                                .selectedOptions(answer.getAnswerOptionList().stream()
+                                        .map(answerOption -> answerOption.getQuestionOption().getOptionText())
+                                        .collect(Collectors.toList()))
+                                .build())
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
 }

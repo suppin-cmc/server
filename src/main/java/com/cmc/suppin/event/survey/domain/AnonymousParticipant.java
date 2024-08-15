@@ -25,6 +25,7 @@ public class AnonymousParticipant extends BaseDateTimeEntity {
     private Survey survey;
 
     @OneToMany(mappedBy = "anonymousParticipant")
+    @Builder.Default
     private List<Answer> answerList = new ArrayList<>();
 
     private String name;
@@ -41,11 +42,19 @@ public class AnonymousParticipant extends BaseDateTimeEntity {
     @Column(nullable = false)
     private Boolean isAgreed;
 
-    private Boolean isWinner;
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isWinner = false;
 
-    private Boolean isChecked;
+    @Builder.Default
+    @Column(nullable = false)
+    private Boolean isChecked = false;
 
     public void setIsWinner(Boolean isWinner) {
         this.isWinner = isWinner;
+    }
+
+    public void setIsChecked(Boolean isChecked) {
+        this.isChecked = isChecked;
     }
 }

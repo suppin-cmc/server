@@ -44,7 +44,7 @@ public class CommentApi {
     }
 
     @PostMapping("/draft-winners")
-    @Operation(summary = "조건별 당첨자 추첨 API(댓글 이벤트)", description = "주어진 조건에 따라 이벤트의 당첨자를 추첨합니다.")
+    @Operation(summary = "당첨자 랜덤 추첨 결과 리스트 조회 API(댓글 이벤트)", description = "주어진 조건에 따라 이벤트의 당첨자를 추첨합니다.")
     public ResponseEntity<ApiResponse<CommentResponseDTO.WinnerResponseDTO>> drawWinners(
             @RequestBody @Valid CommentRequestDTO.WinnerRequestDTO request,
             @CurrentAccount Account account) {

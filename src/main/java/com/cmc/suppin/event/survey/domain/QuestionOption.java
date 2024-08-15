@@ -27,6 +27,7 @@ public class QuestionOption {
     private String optionText;
 
     @OneToMany(mappedBy = "questionOption")
+    @Builder.Default
     private List<AnswerOption> answerOptionList = new ArrayList<>();
 
 }

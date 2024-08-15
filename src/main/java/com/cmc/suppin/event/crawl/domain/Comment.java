@@ -41,8 +41,16 @@ public class Comment extends BaseDateTimeEntity {
     @Column(nullable = false)
     private LocalDateTime crawlTime;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean isWinner = false;
+
     public void setCrawlTime(LocalDateTime crawlTime) {
         this.crawlTime = crawlTime;
+    }
+
+    public void setIsWinner(boolean isWinner) {
+        this.isWinner = isWinner;
     }
 
 }

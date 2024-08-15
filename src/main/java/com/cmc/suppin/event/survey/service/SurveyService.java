@@ -20,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -54,7 +56,7 @@ public class SurveyService {
 
         // Survey 엔티티 생성 및 저장
         String uuid = UUID.randomUUID().toString();
-        Survey survey = SurveyConverter.toSurveyEntity(event, uuid);
+        Survey survey = SurveyConverter.toSurveyEntity(event, uuid, request.getConsentFormHtml());
         surveyRepository.save(survey);
 
         // 각 개인정보 항목 처리 및 저장
@@ -84,7 +86,7 @@ public class SurveyService {
 
     // 생성된 설문지 조회
     @Transactional(readOnly = true)
-    public SurveyResponseDTO.SurveyResultDTO getSurvey(Long surveyId) {
+    public SurveyResponseDTO.SurveyResultDTO getSurveyBySurveyId(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
                 .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
 
@@ -172,8 +174,10 @@ public class SurveyService {
                 .collect(Collectors.toList());
 
         // 조건에 맞는 주관식 답변 조회
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+
         List<Answer> eligibleAnswers = answerCustomRepository.findEligibleAnswers(
-                request.getQuestionId(), request.getStartDate(), request.getEndDate(),
+                request.getQuestionId(), LocalDateTime.parse(request.getStartDate(), formatter), LocalDateTime.parse(request.getEndDate(), formatter),
                 request.getMinLength(), request.getKeywords());
 
         // 랜덤 추첨
@@ -227,4 +231,19 @@ public class SurveyService {
             anonymousParticipantRepository.save(participant);
         }
     }
+
+    public List<SurveyResponseDTO.SurveyEventWinners> getSurveyEventWinners(Long surveyId, String userId) {
+        Member member = memberRepository.findByUserIdAndStatusNot(userId, UserStatus.DELETED)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        Survey survey = surveyRepository.findById(surveyId)
+                .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
+
+        List<AnonymousParticipant> winners = anonymousParticipantRepository.findBySurveyAndIsWinnerTrue(survey);
+
+        return winners.stream()
+                .map(SurveyConverter::toSurveyEventWinners)
+                .collect(Collectors.toList());
+    }
+
 }

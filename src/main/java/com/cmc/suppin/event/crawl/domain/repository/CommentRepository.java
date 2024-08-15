@@ -24,4 +24,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByEventIdAndCommentDateBetween(Long eventId, LocalDateTime start, LocalDateTime end);
 
     List<Comment> findByEventIdAndCommentTextContaining(Long eventId, String keyword);
+
+    List<Comment> findByEventIdAndIsWinnerTrue(Long eventId);
 }

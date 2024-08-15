@@ -47,7 +47,7 @@ public class SurveyApi {
         if (uuid != null) {
             response = surveyService.getSurveyByUuid(uuid);
         } else if (surveyId != null) {
-            response = surveyService.getSurvey(surveyId);
+            response = surveyService.getSurveyBySurveyId(surveyId);
         } else {
             throw new IllegalArgumentException("Either surveyId or uuid must be provided");
         }

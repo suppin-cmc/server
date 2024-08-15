@@ -54,6 +54,7 @@ public class CommentService {
     }
 
     // 당첨자 조건별 랜덤 추첨(댓글 이벤트)
+    @Transactional
     public CommentResponseDTO.WinnerResponseDTO drawWinners(CommentRequestDTO.WinnerRequestDTO request, String userId) {
         Member member = memberRepository.findByUserIdAndStatusNot(userId, UserStatus.DELETED)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
@@ -77,6 +78,12 @@ public class CommentService {
         Collections.shuffle(filteredComments);
         List<Comment> winners = filteredComments.stream().limit(request.getWinnerCount()).collect(Collectors.toList());
 
+        // 당첨된 댓글의 isWinner 값을 true로 업데이트
+        winners.forEach(winner -> {
+            winner.setIsWinner(true);
+            commentRepository.save(winner);  // 업데이트된 Comment 엔티티를 저장
+        });
+
         return CommentConverter.toWinnerResponseDTO(winners, request);
     }
 
@@ -99,6 +106,17 @@ public class CommentService {
     public List<CommentResponseDTO.CommentDetailDTO> filterWinnersByKeyword(List<CommentResponseDTO.CommentDetailDTO> winners, String keyword) {
         return winners.stream()
                 .filter(winner -> winner.getCommentText().contains(keyword))
+                .collect(Collectors.toList());
+    }
+
+    public List<CommentResponseDTO.CommentEventWinners> getCommentEventWinners(Long eventId, String userId) {
+        Member member = memberRepository.findByUserIdAndStatusNot(userId, UserStatus.DELETED)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found"));
+
+        List<Comment> winners = commentRepository.findByEventIdAndIsWinnerTrue(eventId);
+
+        return winners.stream()
+                .map(CommentConverter::toCommentEventWinners)
                 .collect(Collectors.toList());
     }
 
