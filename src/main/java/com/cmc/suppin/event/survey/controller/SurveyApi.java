@@ -36,13 +36,13 @@ public class SurveyApi {
 
     @GetMapping("/view")
     @Operation(summary = "설문지 조회 API", description = "생성된 설문지 전체 정보를 조회합니다. surveyId와 uuid, 둘 중 하나로 요청할 수 있습니다.")
-    public ResponseEntity<ApiResponse<SurveyResponseDTO.SurveyResultDTO>> getSurvey(
+    public ResponseEntity<ApiResponse<SurveyResponseDTO.SurveyViewDTO>> getSurvey(
             @Parameter(description = "required = false")
             @RequestParam(value = "surveyId", required = false) Long surveyId,
             @Parameter(description = "required = false")
             @RequestParam(value = "uuid", required = false) String uuid) {
 
-        SurveyResponseDTO.SurveyResultDTO response;
+        SurveyResponseDTO.SurveyViewDTO response;
 
         if (uuid != null) {
             response = surveyService.getSurveyByUuid(uuid);

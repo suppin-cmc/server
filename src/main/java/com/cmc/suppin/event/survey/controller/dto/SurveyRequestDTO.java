@@ -67,7 +67,8 @@ public class SurveyRequestDTO {
         @Builder
         public static class ParticipantDTO {
             private String name;
-            private String address;
+            private String fullAddress;
+            private String extraAddress;
             private String email;
             private String phoneNumber;
             private String instagramId;

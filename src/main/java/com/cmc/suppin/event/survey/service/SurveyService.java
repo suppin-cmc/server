@@ -86,21 +86,21 @@ public class SurveyService {
 
     // 생성된 설문지 조회
     @Transactional(readOnly = true)
-    public SurveyResponseDTO.SurveyResultDTO getSurveyBySurveyId(Long surveyId) {
+    public SurveyResponseDTO.SurveyViewDTO getSurveyBySurveyId(Long surveyId) {
         Survey survey = surveyRepository.findById(surveyId)
                 .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
 
         Event event = survey.getEvent();
-        return SurveyConverter.toSurveyResultDTO(survey, event);
+        return SurveyConverter.toSurveyViewResultDTO(survey, event);
     }
 
     @Transactional(readOnly = true)
-    public SurveyResponseDTO.SurveyResultDTO getSurveyByUuid(String uuid) {
+    public SurveyResponseDTO.SurveyViewDTO getSurveyByUuid(String uuid) {
         Survey survey = surveyRepository.findByUuid(uuid)
                 .orElseThrow(() -> new IllegalArgumentException("Survey not found for UUID: " + uuid));
 
         Event event = survey.getEvent();
-        return SurveyConverter.toSurveyResultDTO(survey, event);
+        return SurveyConverter.toSurveyViewResultDTO(survey, event);
     }
 
     // 설문 응답 저장

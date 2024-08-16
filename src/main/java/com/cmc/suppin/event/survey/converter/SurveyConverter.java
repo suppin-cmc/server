@@ -47,15 +47,16 @@ public class SurveyConverter {
                 .collect(Collectors.toList());
     }
 
-    public static SurveyResponseDTO.SurveyResultDTO toSurveyResultDTO(Survey survey, Event event) {
-        List<SurveyResponseDTO.SurveyResultDTO.PersonalInfoOptionDTO> personalInfoOptions = survey.getPersonalInfoList().stream()
-                .map(option -> SurveyResponseDTO.SurveyResultDTO.PersonalInfoOptionDTO.builder()
-                        .optionName(option.getOptionName())
+    public static SurveyResponseDTO.SurveyViewDTO toSurveyViewResultDTO(Survey survey, Event event) {
+        List<SurveyResponseDTO.SurveyViewDTO.PersonalInfoOptionDTO> personalInfoOptions = survey.getPersonalInfoList().stream()
+                .map(option -> SurveyResponseDTO.SurveyViewDTO.PersonalInfoOptionDTO.builder()
+                        .option(option.getOptionName())
                         .build())
                 .collect(Collectors.toList());
 
-        List<SurveyResponseDTO.SurveyResultDTO.QuestionDTO> questions = survey.getQuestionList().stream()
-                .map(question -> SurveyResponseDTO.SurveyResultDTO.QuestionDTO.builder()
+        List<SurveyResponseDTO.SurveyViewDTO.QuestionDTO> questions = survey.getQuestionList().stream()
+                .map(question -> SurveyResponseDTO.SurveyViewDTO.QuestionDTO.builder()
+                        .questionId(question.getId())
                         .questionType(question.getQuestionType())
                         .questionText(question.getQuestionText())
                         .options(question.getQuestionOptionList().stream()
@@ -64,7 +65,7 @@ public class SurveyConverter {
                         .build())
                 .collect(Collectors.toList());
 
-        return SurveyResponseDTO.SurveyResultDTO.builder()
+        return SurveyResponseDTO.SurveyViewDTO.builder()
                 .eventId(event.getId())
                 .eventTitle(event.getTitle())
                 .eventDescription(event.getDescription())
@@ -73,6 +74,7 @@ public class SurveyConverter {
                 .announcementDate(event.getAnnouncementDate().toString())
                 .consentFormHtml(survey.getConsentFormHtml())
                 .personalInfoOptions(personalInfoOptions)
+                .surveyId(survey.getId())
                 .questions(questions)
                 .build();
     }
@@ -102,7 +104,8 @@ public class SurveyConverter {
         return AnonymousParticipant.builder()
                 .survey(survey)
                 .name(dto.getName())
-                .address(dto.getAddress())
+                .fullAddress(dto.getFullAddress())
+                .extraAddress(dto.getExtraAddress())
                 .email(dto.getEmail())
                 .phoneNumber(dto.getPhoneNumber())
                 .isAgreed(dto.getIsAgreed())
@@ -155,7 +158,8 @@ public class SurveyConverter {
         return SurveyResponseDTO.WinnerDetailDTO.builder()
                 .name(participant.getName())
                 .phoneNumber(participant.getPhoneNumber())
-                .address(participant.getAddress())
+                .fullAddress(participant.getFullAddress())
+                .extraAddress(participant.getExtraAddress())
                 .email(participant.getEmail())
                 .instagramId(participant.getInstagramId())
                 .answers(answers)

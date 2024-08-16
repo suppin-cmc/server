@@ -24,7 +24,7 @@ public class SurveyResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class SurveyResultDTO {
+    public static class SurveyViewDTO {
         private Long eventId;
         private String eventTitle;
         private String eventDescription;
@@ -33,6 +33,7 @@ public class SurveyResponseDTO {
         private String announcementDate;
         private String consentFormHtml;
         private List<PersonalInfoOptionDTO> personalInfoOptions;
+        private Long surveyId;
         private List<QuestionDTO> questions;
 
         @Getter
@@ -40,6 +41,7 @@ public class SurveyResponseDTO {
         @AllArgsConstructor
         @Builder
         public static class QuestionDTO {
+            private Long questionId;
             private QuestionType questionType;
             private String questionText;
             private List<String> options;
@@ -50,7 +52,7 @@ public class SurveyResponseDTO {
         @AllArgsConstructor
         @Builder
         public static class PersonalInfoOptionDTO {
-            private String optionName;
+            private String option;
         }
     }
 
@@ -114,7 +116,8 @@ public class SurveyResponseDTO {
     public static class WinnerDetailDTO {
         private String name;
         private String phoneNumber;
-        private String address;
+        private String fullAddress;
+        private String extraAddress;
         private String email;
         private String instagramId;
         private List<AnswerDetailDTO> answers;
