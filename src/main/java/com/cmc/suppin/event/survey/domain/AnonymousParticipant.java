@@ -30,7 +30,9 @@ public class AnonymousParticipant extends BaseDateTimeEntity {
 
     private String name;
 
-    private String address;
+    private String fullAddress;
+
+    private String extraAddress;
 
     private String email;
 
