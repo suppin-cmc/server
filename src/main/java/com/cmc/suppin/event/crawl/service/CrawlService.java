@@ -19,6 +19,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.PageLoadStrategy;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -98,6 +99,8 @@ public class CrawlService {
         options.addArguments("--disable-infobars");
         options.addArguments("--disable-browser-side-navigation");
         options.addArguments("--disable-software-rasterizer");
+        options.addArguments("--blink-settings=imagesEnabled=false"); // 이미지 로딩 비활성화
+        options.setPageLoadStrategy(PageLoadStrategy.NORMAL); // 페이지 로드 전략 설정
 
         WebDriver driver = new ChromeDriver(options);
         driver.get(url);
