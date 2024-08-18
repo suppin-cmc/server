@@ -90,7 +90,6 @@ public class SurveyRequestDTO {
             @AllArgsConstructor
             @Builder
             public static class AnswerOptionDTO {
-                @NotNull
                 private Long questionOptionId;
             }
         }

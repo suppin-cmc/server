@@ -168,14 +168,25 @@ public class SurveyService {
         Question question = questionRepository.findByIdAndSurveyId(request.getQuestionId(), request.getSurveyId())
                 .orElseThrow(() -> new IllegalArgumentException("Question not found for the given survey"));
 
+        Event event = survey.getEvent();
+
+        // 선별 조건 Event 엔티티에 저장
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        event.setWinnerCount(request.getWinnerCount());
+        event.setSelectionStartDate(LocalDateTime.parse(request.getStartDate(), formatter));
+        event.setSelectionEndDate(LocalDateTime.parse(request.getEndDate(), formatter));
+        event.setMinLength(request.getMinLength());
+        event.setKeywords(request.getKeywords());
+
+        // Event 엔티티 업데이트 (저장)
+        eventRepository.save(event);
+
         // 키워드를 OR 조건으로 연결
         List<String> keywordPatterns = request.getKeywords().stream()
                 .map(keyword -> "%" + keyword.toLowerCase() + "%")
                 .collect(Collectors.toList());
 
         // 조건에 맞는 주관식 답변 조회
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
         List<Answer> eligibleAnswers = answerCustomRepository.findEligibleAnswers(
                 request.getQuestionId(), LocalDateTime.parse(request.getStartDate(), formatter), LocalDateTime.parse(request.getEndDate(), formatter),
                 request.getMinLength(), request.getKeywords());
@@ -232,18 +243,35 @@ public class SurveyService {
         }
     }
 
-    public List<SurveyResponseDTO.SurveyEventWinners> getSurveyEventWinners(Long surveyId, String userId) {
+    public SurveyResponseDTO.SurveyEventWinnersResponse getSurveyEventWinners(Long surveyId, String userId) {
         Member member = memberRepository.findByUserIdAndStatusNot(userId, UserStatus.DELETED)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
         Survey survey = surveyRepository.findById(surveyId)
                 .orElseThrow(() -> new IllegalArgumentException("Survey not found"));
 
+        Event event = survey.getEvent();
+
+        // 당첨자 리스트 가져오기
         List<AnonymousParticipant> winners = anonymousParticipantRepository.findBySurveyAndIsWinnerTrue(survey);
 
-        return winners.stream()
+        List<SurveyResponseDTO.SurveyEventWinners> winnerList = winners.stream()
                 .map(SurveyConverter::toSurveyEventWinners)
                 .collect(Collectors.toList());
+
+        // 선별 조건 가져오기
+        SurveyResponseDTO.SurveyEventWinnersResponse.SelectionCriteriaDTO criteria = SurveyResponseDTO.SurveyEventWinnersResponse.SelectionCriteriaDTO.builder()
+                .winnerCount(event.getWinnerCount())
+                .selectionStartDate(event.getSelectionStartDate())
+                .selectionEndDate(event.getSelectionEndDate())
+                .minLength(event.getMinLength())
+                .keywords(event.getKeywords())
+                .build();
+
+        return SurveyResponseDTO.SurveyEventWinnersResponse.builder()
+                .selectionCriteria(criteria)
+                .winners(winnerList)
+                .build();
     }
 
 }
