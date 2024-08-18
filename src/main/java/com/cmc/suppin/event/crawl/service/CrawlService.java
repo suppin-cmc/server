@@ -28,9 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -68,14 +66,12 @@ public class CrawlService {
             commentRepository.deleteByUrlAndEventId(url, eventId);
 
             // 삭제 후, 확인을 위한 로그 출력 또는 추가 검증
-            List<Comment> deletedComments = commentRepository.findByUrlAndEventId(url, eventId);
-            if (!deletedComments.isEmpty()) {
+            if (commentRepository.existsByUrlAndEventId(url, eventId)) {
                 throw new RuntimeException("기존 댓글 삭제에 실패했습니다.");
             }
         } else {
             // 기존 댓글이 존재하는 경우: 크롤링을 중지하고 예외를 던집니다.
-            List<Comment> existingComments = commentRepository.findByUrlAndEventId(url, eventId);
-            if (!existingComments.isEmpty()) {
+            if (commentRepository.existsByUrlAndEventId(url, eventId)) {
                 throw new CrawlException(CrawlErrorCode.DUPLICATE_URL);
             }
         }
@@ -110,24 +106,42 @@ public class CrawlService {
         try {
             Thread.sleep(5000); // 초기 로딩 대기
 
-            long endTime = System.currentTimeMillis() + 600000; // 스크롤 시간을 10분으로 설정 (600,000ms)
             JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
 
-            int previousCommentCount = 0;
-            int currentCommentCount;
+            // Queue와 관련된 로직
+            Queue<Long> heightQueue = new LinkedList<>();
+            int maxQueueSize = 50;
+            int enqueueCount = 0;
+            int retryCount = 0;
 
-            while (System.currentTimeMillis() < endTime) {
+            while (true) {
                 jsExecutor.executeScript("window.scrollTo(0, document.documentElement.scrollHeight);");
+                Thread.sleep(100); // 0.1초 대기
 
-                Thread.sleep(3000); // 3초 대기
+                long newPageHeight = (long) jsExecutor.executeScript("return document.documentElement.scrollHeight");
 
+                if (enqueueCount > maxQueueSize) {
+                    break;
+                }
+
+                if (heightQueue.isEmpty()) {
+                    heightQueue.offer(newPageHeight);
+                    enqueueCount++;
+                } else {
+                    if (heightQueue.peek().equals(newPageHeight)) {
+                        heightQueue.offer(newPageHeight);
+                        enqueueCount++;
+                    } else {
+                        heightQueue.clear();
+                        heightQueue.offer(newPageHeight);
+                        enqueueCount = 1;
+                    }
+                }
+
+                // 댓글 파싱
                 String pageSource = driver.getPageSource();
                 Document doc = Jsoup.parse(pageSource);
                 Elements comments = doc.select("ytd-comment-thread-renderer");
-
-                currentCommentCount = comments.size();
-
-                LocalDateTime crawlTime = LocalDateTime.now();
 
                 for (Element commentElement : comments) {
                     String author = commentElement.select("#author-text span").text();
@@ -140,24 +154,31 @@ public class CrawlService {
                         // 엔티티 저장
                         LocalDateTime actualCommentDate = DateConverter.convertRelativeTime(time);
                         Comment comment = CommentConverter.toCommentEntity(author, text, actualCommentDate, url, event);
-                        comment.setCrawlTime(crawlTime);
+                        comment.setCrawlTime(LocalDateTime.now());
                         commentRepository.save(comment);
                     }
                 }
 
-                // 더 이상 새로운 댓글이 없을 때, 크롤링 종료
-                if (currentCommentCount == previousCommentCount) {
-                    break; // 새로운 댓글이 로드되지 않으면 루프를 종료합니다.
+                // 크롤링 중간 중복 확인 및 종료 조건
+                if (comments.size() == uniqueComments.size()) {
+                    if (retryCount >= 3) {
+                        break; // 3번 이상 시도해도 새로운 댓글이 로드되지 않으면 종료합니다.
+                    }
+                    retryCount++;
+                } else {
+                    retryCount = 0;
                 }
-                previousCommentCount = currentCommentCount;
             }
         } catch (InterruptedException e) {
+            Thread.currentThread().interrupt(); // InterruptedException을 받을 때 인터럽트 상태를 복구
             e.printStackTrace();
         } finally {
             driver.quit();
         }
+
         return CommentConverter.toCrawlResultDTO(LocalDateTime.now(), uniqueComments.size());
     }
+
 
 }
 
