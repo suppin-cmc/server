@@ -60,7 +60,10 @@ public class SurveyConverter {
                         .questionType(question.getQuestionType())
                         .questionText(question.getQuestionText())
                         .options(question.getQuestionOptionList().stream()
-                                .map(QuestionOption::getOptionText)
+                                .map(option -> SurveyResponseDTO.SurveyViewDTO.QuestionDTO.OptionDTO.builder()
+                                        .questionOptionId(option.getId())
+                                        .optionText(option.getOptionText())
+                                        .build())
                                 .collect(Collectors.toList()))
                         .build())
                 .collect(Collectors.toList());
