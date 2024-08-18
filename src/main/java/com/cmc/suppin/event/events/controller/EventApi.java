@@ -84,12 +84,12 @@ public class EventApi {
     }
 
     @GetMapping("/survey-winners")
-    @Operation(summary = "설문 이벤트 당첨자 조회 API", description = "설문 이벤트의 당첨자 리스트를 조회합니다.")
-    public ResponseEntity<ApiResponse<List<SurveyResponseDTO.SurveyEventWinners>>> getSurveyEventWinners(
+    @Operation(summary = "설문 이벤트 당첨자 조회 API", description = "설문 이벤트의 당첨자 리스트 및 선별 조건을 조회합니다.")
+    public ResponseEntity<ApiResponse<SurveyResponseDTO.SurveyEventWinnersResponse>> getSurveyEventWinners(
             @RequestParam("surveyId") Long surveyId,
             @CurrentAccount Account account) {
 
-        List<SurveyResponseDTO.SurveyEventWinners> winners = surveyService.getSurveyEventWinners(surveyId, account.userId());
-        return ResponseEntity.ok(ApiResponse.of(winners));
+        SurveyResponseDTO.SurveyEventWinnersResponse response = surveyService.getSurveyEventWinners(surveyId, account.userId());
+        return ResponseEntity.ok(ApiResponse.of(response));
     }
 }
