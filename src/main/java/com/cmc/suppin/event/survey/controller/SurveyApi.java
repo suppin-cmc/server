@@ -95,7 +95,7 @@ public class SurveyApi {
     }
 
     @DeleteMapping("/winners")
-    @Operation(summary = "당첨자 리스트 삭제 API(당첨자 재추첨 시, 기존 당첨자 리스트를 삭제 후 진행 해야합니다.)", description = "해당 설문조사의 모든 당첨자들의 isWinner 값을 false로 변경합니다.")
+    @Operation(summary = "설문 이벤트 당첨자 리스트 삭제 API(당첨자 재추첨 시, 기존 당첨자 리스트를 삭제 후 진행해야 합니다.)", description = "해당 설문조사의 모든 당첨자들의 isWinner 값을 false로 변경합니다.")
     public ResponseEntity<ApiResponse<Void>> deleteWinners(@RequestParam("surveyId") Long surveyId) {
         surveyService.deleteWinners(surveyId);
         return ResponseEntity.ok(ApiResponse.of(ResponseCode.SUCCESS));
