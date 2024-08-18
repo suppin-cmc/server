@@ -1,5 +1,6 @@
 package com.cmc.suppin.event.events.domain;
 
+import com.cmc.suppin.event.crawl.controller.dto.CommentRequestDTO;
 import com.cmc.suppin.event.crawl.domain.Comment;
 import com.cmc.suppin.event.survey.domain.Survey;
 import com.cmc.suppin.global.domain.BaseDateTimeEntity;
@@ -11,6 +12,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class Event extends BaseDateTimeEntity {
     private EventStatus status;
 
     // 당첨자 선별 조건
-    @Column(nullable = false)
+    @Column
     private Integer winnerCount;
 
     @Column
@@ -113,4 +115,31 @@ public class Event extends BaseDateTimeEntity {
     public void setKeywords(List<String> keywords) {
         this.keywords = keywords;
     }
+
+    public void setSelectionCriteria(CommentRequestDTO.WinnerRequestDTO request) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        this.winnerCount = request.getWinnerCount();
+
+        // startDate와 endDate가 빈 문자열("")이거나 null일 경우 null로 설정
+        if (request.getStartDate() == null || request.getStartDate().isEmpty()) {
+            this.selectionStartDate = null; // 필터링을 하지 않도록 null로 설정
+        } else {
+            this.selectionStartDate = LocalDateTime.parse(request.getStartDate(), formatter);
+        }
+
+        if (request.getEndDate() == null || request.getEndDate().isEmpty()) {
+            this.selectionEndDate = null; // 필터링을 하지 않도록 null로 설정
+        } else {
+            this.selectionEndDate = LocalDateTime.parse(request.getEndDate(), formatter);
+        }
+
+        this.minLength = request.getMinLength();
+
+        // keywords가 빈 문자열만 있을 경우 처리
+        this.keywords = (request.getKeywords() == null || request.getKeywords().isEmpty() ||
+                (request.getKeywords().size() == 1 && request.getKeywords().get(0).isEmpty())) ?
+                new ArrayList<>() : request.getKeywords();
+    }
+
 }
