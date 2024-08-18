@@ -26,4 +26,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     List<Comment> findByEventIdAndCommentTextContaining(Long eventId, String keyword);
 
     List<Comment> findByEventIdAndIsWinnerTrue(Long eventId);
+
+
+    boolean existsByUrlAndEventId(String url, Long eventId);
 }
