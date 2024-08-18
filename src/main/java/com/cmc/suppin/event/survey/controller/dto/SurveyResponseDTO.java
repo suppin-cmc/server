@@ -44,7 +44,16 @@ public class SurveyResponseDTO {
             private Long questionId;
             private QuestionType questionType;
             private String questionText;
-            private List<String> options;
+            private List<OptionDTO> options;
+
+            @Getter
+            @NoArgsConstructor
+            @AllArgsConstructor
+            @Builder
+            public static class OptionDTO {
+                private Long questionOptionId;
+                private String optionText;
+            }
         }
 
         @Getter
