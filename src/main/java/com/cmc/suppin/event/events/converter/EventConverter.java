@@ -14,7 +14,7 @@ import java.util.Optional;
 public class EventConverter {
 
     public static Event toCommentEventEntity(EventRequestDTO.CommentEventCreateDTO request, Member member) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return Event.builder()
                 .type(EventType.COMMENT)
                 .title(request.getTitle())
@@ -28,7 +28,7 @@ public class EventConverter {
     }
 
     public static Event toSurveyEventEntity(EventRequestDTO.SurveyEventCreateDTO request, Member member) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return Event.builder()
                 .type(EventType.SURVEY)
                 .title(request.getTitle())
@@ -41,7 +41,7 @@ public class EventConverter {
     }
 
     public static EventResponseDTO.CommentEventDetailDTO toEventDetailDTO(Event event) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         return EventResponseDTO.CommentEventDetailDTO.builder()
                 .type(event.getType())
                 .title(event.getTitle())
@@ -53,7 +53,7 @@ public class EventConverter {
     }
 
     public static EventResponseDTO.EventInfoDTO toEventInfoDTO(Event event) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         Optional<String> url = Optional.empty();
         if (event.getType() == EventType.COMMENT) {
@@ -87,7 +87,7 @@ public class EventConverter {
     }
 
     public static Event toUpdatedEventEntity(EventRequestDTO.EventUpdateDTO request, Member member) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         Event.EventBuilder eventBuilder = Event.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())

@@ -174,7 +174,7 @@ public class SurveyService {
                 .collect(Collectors.toList());
 
         // 조건에 맞는 주관식 답변 조회
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         List<Answer> eligibleAnswers = answerCustomRepository.findEligibleAnswers(
                 request.getQuestionId(), LocalDateTime.parse(request.getStartDate(), formatter), LocalDateTime.parse(request.getEndDate(), formatter),

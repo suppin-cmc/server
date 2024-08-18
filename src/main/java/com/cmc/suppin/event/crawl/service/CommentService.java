@@ -48,7 +48,7 @@ public class CommentService {
 
         int totalComments = commentRepository.countByEventIdAndUrl(eventId, url);
 
-        String crawlTime = comments.isEmpty() ? "" : comments.getContent().get(0).getCrawlTime().format(DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm"));
+        String crawlTime = comments.isEmpty() ? "" : comments.getContent().get(0).getCrawlTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
         return CommentConverter.toCommentListDTO(comments.getContent(), crawlTime, totalComments);
     }
@@ -62,7 +62,7 @@ public class CommentService {
         Event event = eventRepository.findByIdAndMemberId(request.getEventId(), member.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         LocalDateTime startDateTime = LocalDateTime.parse(request.getStartDate(), dateTimeFormatter);
         LocalDateTime endDateTime = LocalDateTime.parse(request.getEndDate(), dateTimeFormatter);
 
