@@ -1,6 +1,5 @@
 package com.cmc.suppin.event.crawl.controller.dto;
 
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,14 +26,10 @@ public class CommentRequestDTO {
     @Builder
     public static class WinnerRequestDTO {
         private Long eventId;
-        private int winnerCount;
-        private int minLength;
-
-        @Pattern(regexp = "\\d{4}\\. \\d{2}\\. \\d{2} \\d{2}:\\d{2}", message = "날짜 형식은 yyyy. MM. dd HH:mm 이어야 합니다.")
+        private Integer winnerCount;
+        private Integer minLength;
         private String startDate;
-        @Pattern(regexp = "\\d{4}\\. \\d{2}\\. \\d{2} \\d{2}:\\d{2}", message = "날짜 형식은 yyyy. MM. dd HH:mm 이어야 합니다.")
         private String endDate;
-
         private List<String> keywords;
     }
 }

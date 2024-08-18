@@ -48,7 +48,7 @@ public class CommentService {
 
         int totalComments = commentRepository.countByEventIdAndUrl(eventId, url);
 
-        String crawlTime = comments.isEmpty() ? "" : comments.getContent().get(0).getCrawlTime().format(DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm"));
+        String crawlTime = comments.isEmpty() ? "" : comments.getContent().get(0).getCrawlTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
         return CommentConverter.toCommentListDTO(comments.getContent(), crawlTime, totalComments);
     }
@@ -62,15 +62,35 @@ public class CommentService {
         Event event = eventRepository.findByIdAndMemberId(request.getEventId(), member.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
-        LocalDateTime startDateTime = LocalDateTime.parse(request.getStartDate(), dateTimeFormatter);
-        LocalDateTime endDateTime = LocalDateTime.parse(request.getEndDate(), dateTimeFormatter);
+        // 당첨자 선별 조건 Event 엔티티에 저장
+        event.setSelectionCriteria(request);
+        eventRepository.save(event);
 
-        List<Comment> comments = commentRepository.findByEventIdAndCommentDateBetween(event.getId(), startDateTime, endDateTime);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+        LocalDateTime startDateTime = null;
+        LocalDateTime endDateTime = null;
+
+        // 날짜 필터링을 위한 조건 설정
+        if (request.getStartDate() != null && !request.getStartDate().isEmpty()) {
+            startDateTime = LocalDateTime.parse(request.getStartDate(), dateTimeFormatter);
+        }
+        if (request.getEndDate() != null && !request.getEndDate().isEmpty()) {
+            endDateTime = LocalDateTime.parse(request.getEndDate(), dateTimeFormatter);
+        }
+
+        List<Comment> comments;
+
+        // 날짜 조건이 있을 경우에만 필터링, 없으면 전체 댓글을 조회
+        if (startDateTime != null && endDateTime != null) {
+            comments = commentRepository.findByEventIdAndCommentDateBetween(event.getId(), startDateTime, endDateTime);
+        } else {
+            comments = commentRepository.findByEventId(event.getId());
+        }
 
         // 키워드 필터링(OR 로직) 및 minLength 필터링 추가
         List<Comment> filteredComments = comments.stream()
-                .filter(comment -> request.getKeywords().stream().anyMatch(keyword -> comment.getCommentText().contains(keyword)))
+                .filter(comment -> request.getKeywords().isEmpty() || request.getKeywords().stream().anyMatch(keyword -> comment.getCommentText().contains(keyword)))
                 .filter(comment -> comment.getCommentText().length() >= request.getMinLength())
                 .collect(Collectors.toList());
 
@@ -109,15 +129,37 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
-    public List<CommentResponseDTO.CommentEventWinners> getCommentEventWinners(Long eventId, String userId) {
+    public CommentResponseDTO.CommentEventWinnersWithCriteria getCommentEventWinnersWithCriteria(Long eventId, String userId) {
         Member member = memberRepository.findByUserIdAndStatusNot(userId, UserStatus.DELETED)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found"));
 
+        Event event = eventRepository.findByIdAndMemberId(eventId, member.getId())
+                .orElseThrow(() -> new IllegalArgumentException("Event not found or does not belong to the user"));
+
         List<Comment> winners = commentRepository.findByEventIdAndIsWinnerTrue(eventId);
 
-        return winners.stream()
+        List<CommentResponseDTO.CommentEventWinners> winnerList = winners.stream()
                 .map(CommentConverter::toCommentEventWinners)
                 .collect(Collectors.toList());
+
+        return CommentResponseDTO.CommentEventWinnersWithCriteria.builder()
+                .winners(winnerList)
+                .winnerCount(event.getWinnerCount())
+                .minLength(event.getMinLength())
+                .startDate(event.getSelectionStartDate() != null ? event.getSelectionStartDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : null)
+                .endDate(event.getSelectionEndDate() != null ? event.getSelectionEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")) : null)
+                .keywords(event.getKeywords())
+                .build();
+    }
+
+
+    public void deleteWinners(Long eventId) {
+        List<Comment> comments = commentRepository.findByEventIdAndIsWinnerTrue(eventId);
+
+        for (Comment comment : comments) {
+            comment.setIsWinner(false);
+            commentRepository.save(comment);
+        }
     }
 
 }

@@ -131,7 +131,7 @@ public class SurveyConverter {
     }
 
     public static SurveyResponseDTO.RandomSelectionResponseDTO.SelectionCriteriaDTO toSelectionCriteriaDTO(SurveyRequestDTO.RandomSelectionRequestDTO request) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy. MM. dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         return SurveyResponseDTO.RandomSelectionResponseDTO.SelectionCriteriaDTO.builder()
                 .winnerCount(request.getWinnerCount())

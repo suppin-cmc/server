@@ -4,7 +4,6 @@ import com.cmc.suppin.global.enums.QuestionType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -91,7 +90,6 @@ public class SurveyRequestDTO {
             @AllArgsConstructor
             @Builder
             public static class AnswerOptionDTO {
-                @NotNull
                 private Long questionOptionId;
             }
         }
@@ -109,10 +107,8 @@ public class SurveyRequestDTO {
         @NotNull
         private Integer winnerCount;
         @NotNull
-        @Pattern(regexp = "\\d{4}\\. \\d{2}\\. \\d{2} \\d{2}:\\d{2}", message = "날짜 형식은 yyyy. MM. dd HH:mm 이어야 합니다.")
         private String startDate;
         @NotNull
-        @Pattern(regexp = "\\d{4}\\. \\d{2}\\. \\d{2} \\d{2}:\\d{2}", message = "날짜 형식은 yyyy. MM. dd HH:mm 이어야 합니다.")
         private String endDate;
         @NotNull
         private Integer minLength;

@@ -151,4 +151,26 @@ public class SurveyResponseDTO {
         private String name;
         private List<WinnerDetailDTO.AnswerDetailDTO> answers;
     }
+
+    // 당첨자 선별 조건도 포함하여 반환하기 위한 DTO
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class SurveyEventWinnersResponse {
+        private SelectionCriteriaDTO selectionCriteria;
+        private List<SurveyEventWinners> winners;
+
+        @Getter
+        @NoArgsConstructor
+        @AllArgsConstructor
+        @Builder
+        public static class SelectionCriteriaDTO {
+            private Integer winnerCount;
+            private LocalDateTime selectionStartDate;
+            private LocalDateTime selectionEndDate;
+            private Integer minLength;
+            private List<String> keywords;
+        }
+    }
 }

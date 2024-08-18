@@ -74,22 +74,23 @@ public class EventApi {
     }
 
     @GetMapping("/comment-winners")
-    @Operation(summary = "댓글 이벤트 당첨자 조회 API", description = "댓글 이벤트의 당첨자 리스트를 조회합니다.")
-    public ResponseEntity<ApiResponse<List<CommentResponseDTO.CommentEventWinners>>> getCommentEventWinners(
+    @Operation(summary = "댓글 이벤트 당첨자 조회 API", description = "댓글 이벤트의 당첨자 리스트와 선별 조건을 조회합니다.")
+    public ResponseEntity<ApiResponse<CommentResponseDTO.CommentEventWinnersWithCriteria>> getCommentEventWinners(
             @RequestParam("eventId") Long eventId,
             @CurrentAccount Account account) {
 
-        List<CommentResponseDTO.CommentEventWinners> winners = commentService.getCommentEventWinners(eventId, account.userId());
-        return ResponseEntity.ok(ApiResponse.of(winners));
+        CommentResponseDTO.CommentEventWinnersWithCriteria winnersWithCriteria = commentService.getCommentEventWinnersWithCriteria(eventId, account.userId());
+        return ResponseEntity.ok(ApiResponse.of(winnersWithCriteria));
     }
 
+
     @GetMapping("/survey-winners")
-    @Operation(summary = "설문 이벤트 당첨자 조회 API", description = "설문 이벤트의 당첨자 리스트를 조회합니다.")
-    public ResponseEntity<ApiResponse<List<SurveyResponseDTO.SurveyEventWinners>>> getSurveyEventWinners(
+    @Operation(summary = "설문 이벤트 당첨자 조회 API", description = "설문 이벤트의 당첨자 리스트 및 선별 조건을 조회합니다.")
+    public ResponseEntity<ApiResponse<SurveyResponseDTO.SurveyEventWinnersResponse>> getSurveyEventWinners(
             @RequestParam("surveyId") Long surveyId,
             @CurrentAccount Account account) {
 
-        List<SurveyResponseDTO.SurveyEventWinners> winners = surveyService.getSurveyEventWinners(surveyId, account.userId());
-        return ResponseEntity.ok(ApiResponse.of(winners));
+        SurveyResponseDTO.SurveyEventWinnersResponse response = surveyService.getSurveyEventWinners(surveyId, account.userId());
+        return ResponseEntity.ok(ApiResponse.of(response));
     }
 }
