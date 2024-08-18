@@ -120,4 +120,13 @@ public class CommentService {
                 .collect(Collectors.toList());
     }
 
+    public void deleteWinners(Long eventId) {
+        List<Comment> comments = commentRepository.findByEventIdAndIsWinnerTrue(eventId);
+
+        for (Comment comment : comments) {
+            comment.setIsWinner(false);
+            commentRepository.save(comment);
+        }
+    }
+
 }

@@ -4,6 +4,7 @@ import com.cmc.suppin.event.crawl.controller.dto.CommentRequestDTO;
 import com.cmc.suppin.event.crawl.controller.dto.CommentResponseDTO;
 import com.cmc.suppin.event.crawl.service.CommentService;
 import com.cmc.suppin.global.response.ApiResponse;
+import com.cmc.suppin.global.response.ResponseCode;
 import com.cmc.suppin.global.security.reslover.Account;
 import com.cmc.suppin.global.security.reslover.CurrentAccount;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +45,7 @@ public class CommentApi {
     }
 
     @PostMapping("/draft-winners")
-    @Operation(summary = "당첨자 랜덤 추첨 결과 리스트 조회 API(댓글 이벤트)", description = "주어진 조건에 따라 이벤트의 당첨자를 추첨합니다.")
+    @Operation(summary = "당첨자 랜덤 추첨 결과 조회 API(댓글 이벤트)", description = "주어진 조건에 따라 이벤트의 당첨자를 추첨합니다.")
     public ResponseEntity<ApiResponse<CommentResponseDTO.WinnerResponseDTO>> drawWinners(
             @RequestBody @Valid CommentRequestDTO.WinnerRequestDTO request,
             @CurrentAccount Account account) {
@@ -60,5 +61,12 @@ public class CommentApi {
             @CurrentAccount Account account) {
         List<CommentResponseDTO.CommentDetailDTO> filteredWinners = commentService.getCommentsByKeyword(eventId, keyword, account.userId());
         return ResponseEntity.ok(ApiResponse.of(filteredWinners));
+    }
+
+    @DeleteMapping("/")
+    @Operation(summary = "댓글 이벤트 당첨자 리스트 삭제 API(당첨자 재추첨 시, 기존 당첨자 리스트를 삭제한 후 진행해야 합니다.", description = "모든 당첨자들의 isWinner 값을 false로 변경합니다.")
+    public ResponseEntity<ApiResponse<Void>> deleteWinners(@RequestParam("eventId") Long eventId, @CurrentAccount Account account) {
+        commentService.deleteWinners(eventId);
+        return ResponseEntity.ok(ApiResponse.of(ResponseCode.SUCCESS));
     }
 }
