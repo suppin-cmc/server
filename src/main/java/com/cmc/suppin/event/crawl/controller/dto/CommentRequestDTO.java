@@ -26,11 +26,10 @@ public class CommentRequestDTO {
     @Builder
     public static class WinnerRequestDTO {
         private Long eventId;
-        private int winnerCount;
-        private int minLength;
+        private Integer winnerCount;
+        private Integer minLength;
         private String startDate;
         private String endDate;
-
         private List<String> keywords;
     }
 }

@@ -46,6 +46,19 @@ public class CommentResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    public static class CommentEventWinnersWithCriteria {
+        private Integer winnerCount;
+        private Integer minLength;
+        private String startDate;
+        private String endDate;
+        private List<String> keywords;
+        private List<CommentEventWinners> winners;
+    }
+
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class CommentEventWinners {
         private String author;
         private String commentText;
