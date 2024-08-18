@@ -29,7 +29,7 @@ public class MailConfig {
             // Format the current date and time
             String formattedDateTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul"))
                     .format(DateTimeFormatter.ofPattern("yyyy-MM-dd, HH:mm"));
-            
+
             // Use StringBuilder to construct the HTML email body
             StringBuilder emailBody = new StringBuilder();
             emailBody.append("<!DOCTYPE html>")
@@ -42,13 +42,13 @@ public class MailConfig {
                     .append("<body style=\"font-family: Arial, sans-serif;\">")
                     .append("<div style=\"padding: 20px; border: 1px solid #eaeaea; max-width: 600px; margin: 0 auto;\">")
                     .append("<div style=\"padding: 20px; border-bottom: 1px solid #eaeaea; text-align: center;\">")
-                    .append("<img src=\"cid:suppinLogo\" alt=\"Suppin Logo\" style=\"width: 100px;\">")
+                    .append("<img src=\"cid:suppinLogo\" alt=\"Suppin Logo\" style=\"width: 100%; height: 120px; object-fit: cover;\">")
                     .append("<h2 style=\"color: #333;\"><span style=\"color: #1a73e8;\">[Suppin]</span> 인증번호를 안내해 드립니다.</h2>")
                     .append("</div>")
                     .append("<div style=\"padding: 20px;\">")
-                    .append("<p>안녕하세요, Suppin을 이용해주셔서 감사합니다 :)</p>")
-                    .append("<p>Suppin 회원가입을 위해 인증번호를 안내해 드립니다. 아래 인증번호를 입력하여 이메일 인증을 완료해 주세요.</p>")
-                    .append("<div style=\"font-size: 24px; font-weight: bold; margin: 20px 0; color: #333; text-align: center;\">")
+                    .append("<p style=\"color: #000000;\">안녕하세요, Suppin을 이용해주셔서 감사합니다 :)</p>")
+                    .append("<p style=\"color: #000000;\">Suppin 회원가입을 위해 인증번호 안내 드립니다. 아래 인증번호를 5분 이내로 입력하여 이메일 인증을 완료해 주세요.</p>")
+                    .append("<div style=\"font-size: 24px; font-weight: bold; margin: 20px 0; color: #1a73e8; text-align: center;\">") // 인증번호 색상
                     .append(code)
                     .append("</div>")
                     .append("<table style=\"width: 100%; border-collapse: collapse;\">")
@@ -73,7 +73,7 @@ public class MailConfig {
             helper.setText(emailBody.toString(), true);
 
             // Add inline image
-            ClassPathResource logoImage = new ClassPathResource("static/images/suppin-logo.png");
+            ClassPathResource logoImage = new ClassPathResource("static/images/suppin-logo2.png");
             helper.addInline("suppinLogo", logoImage);
 
             javaMailSender.send(message);
