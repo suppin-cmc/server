@@ -77,7 +77,7 @@ public class SurveyApi {
     }
 
     @PostMapping("/draft")
-    @Operation(summary = "당첨자 랜덤 추첨 결과 리스트 조회 API(설문 이벤트)",
+    @Operation(summary = "당첨자 랜덤 추첨 결과 조회 API(설문 이벤트)",
             description = "주관식 답변 중 조건을 설정하여 랜덤으로 당첨자를 추첨합니다. 추첨된 당첨자의 isWinner값이 True로 설정됩니다. " + "자세한 요청 및 응답 형식은 노션 API 문서를 참고해주세요.")
     public ResponseEntity<ApiResponse<SurveyResponseDTO.RandomSelectionResponseDTO>> selectRandomWinners(
             @RequestBody @Valid SurveyRequestDTO.RandomSelectionRequestDTO request, @CurrentAccount Account account) {
