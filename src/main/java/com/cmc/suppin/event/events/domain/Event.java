@@ -63,6 +63,24 @@ public class Event extends BaseDateTimeEntity {
     @Enumerated(EnumType.STRING)
     private EventStatus status;
 
+    // 당첨자 선별 조건
+    @Column(nullable = false)
+    private Integer winnerCount;
+
+    @Column
+    private LocalDateTime selectionStartDate;
+
+    @Column
+    private LocalDateTime selectionEndDate;
+
+    @Column
+    private Integer minLength;
+
+    @ElementCollection
+    @CollectionTable(name = "event_keywords", joinColumns = @JoinColumn(name = "event_id"))
+    @Column(name = "keyword")
+    private List<String> keywords;
+
     public void setMember(Member member) {
         this.member = member;
         member.getEventList().add(this);
@@ -74,5 +92,25 @@ public class Event extends BaseDateTimeEntity {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public void setWinnerCount(Integer winnerCount) {
+        this.winnerCount = winnerCount;
+    }
+
+    public void setSelectionStartDate(LocalDateTime selectionStartDate) {
+        this.selectionStartDate = selectionStartDate;
+    }
+
+    public void setSelectionEndDate(LocalDateTime selectionEndDate) {
+        this.selectionEndDate = selectionEndDate;
+    }
+
+    public void setMinLength(Integer minLength) {
+        this.minLength = minLength;
+    }
+
+    public void setKeywords(List<String> keywords) {
+        this.keywords = keywords;
     }
 }
