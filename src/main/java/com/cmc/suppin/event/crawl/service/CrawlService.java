@@ -27,6 +27,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -46,7 +48,7 @@ public class CrawlService {
 
         List<Comment> existingComments = commentRepository.findByUrl(url);
         if (!existingComments.isEmpty()) {
-            LocalDateTime firstCommentDate = existingComments.get(0).getCrawlTime();
+            ZonedDateTime firstCommentDate = existingComments.get(0).getCrawlTime().atZone(ZoneId.of("Asia/Seoul"));
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             return "동일한 URL의 댓글을 " + firstCommentDate.format(formatter) + " 일자에 수집한 이력이 있습니다.";
         }
@@ -62,21 +64,17 @@ public class CrawlService {
                 .orElseThrow(() -> new IllegalArgumentException("Event not found"));
 
         if (forceUpdate) {
-            // 기존 댓글 삭제
             commentRepository.deleteByUrlAndEventId(url, eventId);
 
-            // 삭제 후, 확인을 위한 로그 출력 또는 추가 검증
             if (commentRepository.existsByUrlAndEventId(url, eventId)) {
                 throw new RuntimeException("기존 댓글 삭제에 실패했습니다.");
             }
         } else {
-            // 기존 댓글이 존재하는 경우: 크롤링을 중지하고 예외를 던집니다.
             if (commentRepository.existsByUrlAndEventId(url, eventId)) {
                 throw new CrawlException(CrawlErrorCode.DUPLICATE_URL);
             }
         }
 
-        // 크롤링 코드 실행
         String chromeDriverPath = System.getenv("CHROME_DRIVER_PATH");
         if (chromeDriverPath != null && !chromeDriverPath.isEmpty()) {
             System.setProperty("webdriver.chrome.driver", chromeDriverPath);
@@ -95,8 +93,8 @@ public class CrawlService {
         options.addArguments("--disable-infobars");
         options.addArguments("--disable-browser-side-navigation");
         options.addArguments("--disable-software-rasterizer");
-        options.addArguments("--blink-settings=imagesEnabled=false"); // 이미지 로딩 비활성화
-        options.setPageLoadStrategy(PageLoadStrategy.NORMAL); // 페이지 로드 전략 설정
+        options.addArguments("--blink-settings=imagesEnabled=false");
+        options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
 
         WebDriver driver = new ChromeDriver(options);
         driver.get(url);
@@ -104,11 +102,10 @@ public class CrawlService {
         Set<String> uniqueComments = new HashSet<>();
 
         try {
-            Thread.sleep(5000); // 초기 로딩 대기
+            Thread.sleep(5000);
 
             JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
 
-            // Queue와 관련된 로직
             Queue<Long> heightQueue = new LinkedList<>();
             int maxQueueSize = 50;
             int enqueueCount = 0;
@@ -116,7 +113,7 @@ public class CrawlService {
 
             while (true) {
                 jsExecutor.executeScript("window.scrollTo(0, document.documentElement.scrollHeight);");
-                Thread.sleep(100); // 0.1초 대기
+                Thread.sleep(100);
 
                 long newPageHeight = (long) jsExecutor.executeScript("return document.documentElement.scrollHeight");
 
@@ -138,7 +135,6 @@ public class CrawlService {
                     }
                 }
 
-                // 댓글 파싱
                 String pageSource = driver.getPageSource();
                 Document doc = Jsoup.parse(pageSource);
                 Elements comments = doc.select("ytd-comment-thread-renderer");
@@ -151,18 +147,18 @@ public class CrawlService {
                     if (!uniqueComments.contains(text)) {
                         uniqueComments.add(text);
 
-                        // 엔티티 저장
                         LocalDateTime actualCommentDate = DateConverter.convertRelativeTime(time);
                         Comment comment = CommentConverter.toCommentEntity(author, text, actualCommentDate, url, event);
-                        comment.setCrawlTime(LocalDateTime.now());
+
+                        // Set crawl time with timezone
+                        comment.setCrawlTime(ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime());
                         commentRepository.save(comment);
                     }
                 }
 
-                // 크롤링 중간 중복 확인 및 종료 조건
                 if (comments.size() == uniqueComments.size()) {
                     if (retryCount >= 3) {
-                        break; // 3번 이상 시도해도 새로운 댓글이 로드되지 않으면 종료합니다.
+                        break;
                     }
                     retryCount++;
                 } else {
@@ -170,7 +166,7 @@ public class CrawlService {
                 }
             }
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); // InterruptedException을 받을 때 인터럽트 상태를 복구
+            Thread.currentThread().interrupt();
             e.printStackTrace();
         } finally {
             driver.quit();
@@ -178,7 +174,6 @@ public class CrawlService {
 
         return CommentConverter.toCrawlResultDTO(LocalDateTime.now(), uniqueComments.size());
     }
-
-
 }
+
 
