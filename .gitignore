@@ -6,7 +6,7 @@ build/
 !**/src/test/**/build/
 /src/main/resources/firebase/
 /src/main/resources/firebase/suppin-a5657-firebase-adminsdk-s75m9-d65cc88029.json
-/src/main/resources/drivers/chromedriver.exe
+/src/main/resources/drivers/
 
 
 ### STS ###
