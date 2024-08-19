@@ -1,6 +1,7 @@
 package com.cmc.suppin.member.domain;
 
 import com.cmc.suppin.event.events.domain.Event;
+import com.cmc.suppin.fcm.domain.DeviceToken;
 import com.cmc.suppin.global.domain.BaseDateTimeEntity;
 import com.cmc.suppin.global.enums.UserRole;
 import com.cmc.suppin.global.enums.UserStatus;
@@ -27,6 +28,10 @@ public class Member extends BaseDateTimeEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     @Builder.Default
     private List<Event> eventList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @Builder.Default
+    private List<DeviceToken> deviceTokenList = new ArrayList<>();
 
     @Column(columnDefinition = "VARCHAR(30)", nullable = false)
     private String userId;
@@ -70,6 +75,16 @@ public class Member extends BaseDateTimeEntity {
 
     public void updatePassword(String encode) {
         this.password = encode;
+    }
+
+    public void addDeviceToken(DeviceToken deviceToken) {
+        deviceToken.setMember(this);
+        this.deviceTokenList.add(deviceToken);
+    }
+
+    public void removeDeviceToken(DeviceToken deviceToken) {
+        this.deviceTokenList.remove(deviceToken);
+        deviceToken.setMember(null);
     }
 }
 
