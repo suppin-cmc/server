@@ -4,7 +4,6 @@ import com.cmc.suppin.event.events.controller.dto.EventRequestDTO;
 import com.cmc.suppin.event.events.controller.dto.EventResponseDTO;
 import com.cmc.suppin.event.events.domain.Event;
 import com.cmc.suppin.event.survey.domain.Survey;
-import com.cmc.suppin.global.enums.EventStatus;
 import com.cmc.suppin.global.enums.EventType;
 import com.cmc.suppin.member.domain.Member;
 
@@ -71,13 +70,6 @@ public class EventConverter {
         Long surveyId = (survey != null) ? survey.getId() : null;
         String uuid = (survey != null) ? survey.getUuid() : null;
 
-        // 현재 시점 가져오기
-        LocalDateTime now = LocalDateTime.now();
-
-        // status 계산
-        EventStatus status = event.getEndDate().isAfter(now) ? EventStatus.PROCESSING : EventStatus.DONE;
-
-
         return EventResponseDTO.EventInfoDTO.builder()
                 .eventId(event.getId())
                 .type(event.getType())
@@ -88,7 +80,7 @@ public class EventConverter {
                 .announcementDate(event.getAnnouncementDate().format(formatter))
                 .surveyCount(surveyAnswerCount)
                 .commentCount(event.getCommentList().size())
-                .status(status)
+                .status(event.getStatus())
                 .surveyId(surveyId)
                 .uuid(uuid)
                 .build();
