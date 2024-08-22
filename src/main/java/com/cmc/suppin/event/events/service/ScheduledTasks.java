@@ -10,7 +10,7 @@ public class ScheduledTasks {
 
     private final EventService eventService;
 
-    @Scheduled(cron = "0 0/30 * * * *") // 30분마다 실행
+    @Scheduled(cron = "0 * * * * *") // 매분마다 실행
     public void updateEventStatuses() {
         eventService.updateEventStatus();
     }
