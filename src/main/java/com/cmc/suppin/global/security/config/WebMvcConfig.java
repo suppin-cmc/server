@@ -26,9 +26,11 @@ public class WebMvcConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*") // TODO: 2024-08-07 개발용으로 모든 도메인 허용, 운영 시 아래 주석 해제
 //                .allowedOrigins(getAllowOrigins())
-                .allowedHeaders("Authorization", "Cache-Control", "Content-Type")
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-                .allowCredentials(true);
+                .allowedHeaders("Authorization", "Cache-Control", "Content-Type", "ngrok-skip-browser-warning")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                .allowCredentials(true)
+                .exposedHeaders("Access-Control-Allow-Origin", "Access-Control-Allow-Credentials") // 응답 헤더 노출
+                .maxAge(3600);
     }
 
     private String[] getAllowOrigins() {
